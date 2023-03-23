@@ -14,6 +14,7 @@ import { appRouter } from "~/server/api/root";
 import superjson from "superjson";
 import { prisma } from "~/server/db";
 import { PageLayout } from "~/components/Layout";
+import { PostView } from "~/components/PostView";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = createProxySSGHelpers({
@@ -40,6 +41,24 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export const getStaticPaths = () => {
   return { paths: [], fallback: "blocking" };
+};
+
+const ProfileFeed = ({ userId }: { userId: string }) => {
+  const { data, isLoading, error } = api.post.getByUserId.useQuery({
+    userId,
+  });
+
+  if (isLoading) return <LoadingPage />;
+  if (error) return <div>{error.message}</div>;
+  if (!data || data.length === 0) return <div>User has no posts yet.</div>;
+
+  return (
+    <div>
+      {data.map(({ post, author }) => (
+        <PostView post={post} author={author} key={post.id} />
+      ))}
+    </div>
+  );
 };
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
@@ -69,6 +88,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <div className="mt-16" />
         <div className="p-4 text-2xl font-bold">{`@${username}`}</div>
         <div className="w-full border-b border-slate-400" />
+        <ProfileFeed userId={data.id} />
       </PageLayout>
     </>
   );
