@@ -1,4 +1,8 @@
 import type { User } from "@clerk/nextjs/dist/api";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import superjson from "superjson";
+import { appRouter } from "~/server/api/root";
+import { prisma } from "~/server/db";
 
 export const filterUserForClient = (user: User) => {
   return {
@@ -6,4 +10,12 @@ export const filterUserForClient = (user: User) => {
     username: user.username,
     profileImageUrl: user.profileImageUrl,
   };
+};
+
+export const generateSSGHelper = () => {
+  return createProxySSGHelpers({
+    router: appRouter,
+    ctx: { prisma: prisma, userId: null },
+    transformer: superjson, // optional - adds superjson serialization
+  });
 };

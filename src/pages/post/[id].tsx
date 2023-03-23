@@ -1,5 +1,5 @@
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-import { type NextPage } from "next";
+import { GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,22 +12,41 @@ import { LoadingPage } from "~/components/Loading";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
+import { generateSSGHelper } from "~/server/utils";
+import { PostView } from "~/components/PostView";
 
-const SinglePostPage: NextPage = () => {
-  const { user, isLoaded: userIsLoaded, isSignedIn } = useUser();
+export const getStaticProps: GetStaticProps = async (context) => {
+  const ssg = generateSSGHelper();
 
-  // start loading posts immediately
-  api.post.getAll.useQuery();
+  const id = context.params?.id;
 
-  if (!userIsLoaded) return <div />;
+  if (typeof id !== "string") throw new Error("no id");
+
+  await ssg.post.getById.prefetch({ id });
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      id,
+    },
+  };
+};
+
+export const getStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+};
+
+const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
+  const { data } = api.post.getById.useQuery({ id });
+  if (!data) return <div>404</div>;
 
   return (
     <>
       <Head>
-        <title>Post</title>
+        <title>{`${data.post.content} - @${data.author.username}`}</title>
       </Head>
       <PageLayout>
-        <div>Posts</div>
+        <PostView post={data.post} author={data.author} />
       </PageLayout>
     </>
   );

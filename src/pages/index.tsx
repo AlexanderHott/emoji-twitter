@@ -1,17 +1,12 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
-import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
-
-import dayjs from "dayjs";
-
-import { api, type RouterOutputs } from "~/utils/api";
-import { LoadingPage } from "~/components/Loading";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
+import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
+import { api } from "~/utils/api";
 
 const CreatePostWizard = () => {
   const { user } = useUser();

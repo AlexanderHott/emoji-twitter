@@ -1,27 +1,14 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
-import relativeTime from "dayjs/plugin/relativeTime";
-
-import dayjs from "dayjs";
-
-import { api } from "~/utils/api";
-import { LoadingPage } from "~/components/Loading";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { appRouter } from "~/server/api/root";
-import superjson from "superjson";
-import { prisma } from "~/server/db";
 import { PageLayout } from "~/components/Layout";
+import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
+import { generateSSGHelper } from "~/server/utils";
+import { api } from "~/utils/api";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: { prisma: prisma, userId: null },
-    transformer: superjson, // optional - adds superjson serialization
-  });
+  const ssg = generateSSGHelper();
 
   const slug = context.params?.slug;
 
