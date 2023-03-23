@@ -13,7 +13,6 @@ import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
 import { PostView } from "~/components/PostView";
 
-
 const CreatePostWizard = () => {
   const { user } = useUser();
   const ctx = api.useContext();
@@ -54,8 +53,8 @@ const CreatePostWizard = () => {
         onChange={(e) => setContent(e.target.value)}
         disabled={isPosting}
         onKeyDown={(e) => {
-          e.preventDefault();
           if (e.key === "Enter") {
+            e.preventDefault();
             mutate({ content });
           }
         }}
