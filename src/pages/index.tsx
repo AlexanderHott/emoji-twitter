@@ -8,12 +8,23 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 
 import { api, type RouterOutputs } from "~/utils/api";
-import { LoadingPage, LoadingSpinner } from "~/components/Loading";
+import { LoadingPage } from "~/components/Loading";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 const CreatePostWizard = () => {
   const { user } = useUser();
+  const ctx = api.useContext();
+  const { mutate, isLoading: isPosting } = api.post.create.useMutation({
+    onSuccess: () => {
+      setContent("");
+      // `void` tells typescript that we don't care about the result of the promise
+      void ctx.post.getAll.invalidate();
+    },
+  });
+  const [content, setContent] = useState("");
+
   if (!user) return null;
 
   return (
@@ -28,7 +39,11 @@ const CreatePostWizard = () => {
       <input
         placeholder="Type some emojis"
         className="grow bg-transparent outline-none"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        disabled={isPosting}
       />
+      <button onClick={() => mutate({ content })}>Post</button>
     </div>
   );
 };
@@ -53,7 +68,7 @@ const PostView = (props: PostWithUser) => {
             {dayjs(post.createdAt).fromNow()}
           </span>
         </div>
-        <span>{post.content}</span>
+        <span className="text-2xl">{post.content}</span>
       </div>
     </div>
   );
