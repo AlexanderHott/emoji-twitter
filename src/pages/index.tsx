@@ -85,7 +85,7 @@ const Feed = () => {
 
   if (postError)
     return (
-      <div className="grid h-screen w-screen place-items-center">
+      <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
         Failed to load posts
       </div>
     );
