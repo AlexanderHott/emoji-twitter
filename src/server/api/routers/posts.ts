@@ -35,7 +35,11 @@ const addUserDataToPosts = async (posts: Post[]) => {
     }
     return {
       post,
-      author,
+      author: {
+        id: author.id,
+        username: author.username,
+        profileImageUrl: author.profileImageUrl,
+      },
     };
   });
 };
