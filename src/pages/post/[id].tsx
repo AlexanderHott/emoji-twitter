@@ -1,19 +1,9 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import relativeTime from "dayjs/plugin/relativeTime";
-
-import dayjs from "dayjs";
-
-import { api, type RouterOutputs } from "~/utils/api";
-import { LoadingPage } from "~/components/Loading";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
-import { generateSSGHelper } from "~/server/utils";
 import { PostView } from "~/components/PostView";
+import { generateSSGHelper } from "~/server/utils";
+import { api } from "~/utils/api";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = generateSSGHelper();
