@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import { api, type RouterOutputs } from "~/utils/api";
 import { LoadingPage } from "~/components/Loading";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -21,6 +22,16 @@ const CreatePostWizard = () => {
       setContent("");
       // `void` tells typescript that we don't care about the result of the promise
       void ctx.post.getAll.invalidate();
+    },
+    onError: (err) => {
+      if (
+        err.data?.zodError?.fieldErrors.content &&
+        err.data?.zodError?.fieldErrors.content[0]
+      ) {
+        toast.error(err.data?.zodError?.fieldErrors.content[0]);
+      } else {
+        toast.error(err.message);
+      }
     },
   });
   const [content, setContent] = useState("");
@@ -42,8 +53,16 @@ const CreatePostWizard = () => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         disabled={isPosting}
+        onKeyDown={(e) => {
+          e.preventDefault();
+          if (e.key === "Enter") {
+            mutate({ content });
+          }
+        }}
       />
-      <button onClick={() => mutate({ content })}>Post</button>
+      <button disabled={isPosting} onClick={() => mutate({ content })}>
+        Post
+      </button>
     </div>
   );
 };
