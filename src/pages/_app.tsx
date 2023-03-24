@@ -12,16 +12,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     <ClerkProvider {...pageProps}>
       <Head>
         <title>Emoji Twitter</title>
-        <meta name="og:title" content="Emoji Twitter" />
         <meta name="description" content="🗿🗿🗿" />
-        <meta name="og:description" content="🗿🗿🗿" />
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="og:title" content="Emoji Twitter" />
         <meta
           name="og:image"
           content="https://emoji-twitter-seven.vercel.app/api/og"
         />
-
+        <meta name="og:description" content="🗿🗿🗿" />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Toaster position="bottom-center" />

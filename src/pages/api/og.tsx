@@ -3,12 +3,12 @@ import { ImageResponse } from "@vercel/og";
 export const config = {
   runtime: "edge",
 };
-const font = fetch(new URL("/public/impact.ttf", import.meta.url)).then((res) =>
-  res.arrayBuffer()
-);
+// const font = fetch(new URL("/public/impact.ttf", import.meta.url)).then((res) =>
+//   res.arrayBuffer()
+// );
 
-export default async function handle() {
-  const fontData = await font;
+export default function handle() {
+  //   const fontData = await font;
   return new ImageResponse(
     (
       <div tw="w-full h-full flex flex-col justify-around items-center bg-black">
@@ -61,7 +61,7 @@ export default async function handle() {
     {
       width: 1200,
       height: 630,
-      fonts: [{ name: "Impact", data: fontData, style: "normal" }],
+      //   fonts: [{ name: "Impact", data: fontData, style: "normal" }],
     }
   );
 }
