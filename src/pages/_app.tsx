@@ -16,13 +16,14 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <meta name="og:title" content="Emoji Twitter" />
         <meta
           name="og:image"
-          content="http://og-examples.vercel.sh/api/static"
+          content="https://emoji-twitter-seven.vercel.app/api/og"
         />
         <meta
           name="og:image:secure_url"
-          content="https://og-examples.vercel.sh/api/static"
+          content="https://emoji-twitter-seven.vercel.app/api/og"
         />
         <meta name="og:description" content="🗿🗿🗿" />
+        <meta name="og:url" content="https://emoji-twitter-seven.vercel.app/" />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" href="/favicon.ico" />
