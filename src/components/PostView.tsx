@@ -12,7 +12,7 @@ export const PostView = (props: PostWithUser) => {
     const utils = api.useContext();
 
     const { mutate: like } = api.post.like.useMutation({
-        onMutate: async ({ postId }) => {
+        onMutate: ({ postId }) => {
             console.log("liking post id", postId);
 
             const prevPosts = utils.post.getAll.getData();
@@ -35,7 +35,7 @@ export const PostView = (props: PostWithUser) => {
             return { prevPosts }
         },
         onSettled: () => {
-            utils.post.invalidate();
+            void utils.post.invalidate();
         },
         onError: (err, { postId }, ctx) => {
             console.log("Error liking post", err, "postId", postId);
@@ -44,7 +44,7 @@ export const PostView = (props: PostWithUser) => {
     })
 
     const { mutate: unlike } = api.post.unlike.useMutation({
-        onMutate: async ({ postId }) => {
+        onMutate: ({ postId }) => {
             console.log("liking post id", postId);
 
             const prevPosts = utils.post.getAll.getData();
@@ -67,7 +67,7 @@ export const PostView = (props: PostWithUser) => {
             return { prevPosts }
         },
         onSettled: () => {
-            utils.post.invalidate();
+            void utils.post.invalidate();
         },
         onError: (err, { postId }, ctx) => {
             console.log("Error unliking post", err, "postId", postId);

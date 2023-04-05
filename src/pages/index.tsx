@@ -1,4 +1,4 @@
-import { SignInButton, useUser, SignOutButton } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Image from "next/image";
 import { useState } from "react";
@@ -89,7 +89,7 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-    const { user, isLoaded: userIsLoaded, isSignedIn } = useUser();
+    const { isLoaded: userIsLoaded, isSignedIn } = useUser();
 
     // start loading posts immediately
     api.post.getAll.useQuery();

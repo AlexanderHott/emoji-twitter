@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { clerkClient } from "@clerk/nextjs/server";
 import {
-  protectedProcedure,
+  // protectedProcedure,
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
@@ -11,7 +11,7 @@ import { filterUserForClient } from "~/server/utils";
 export const profileRouter = createTRPCRouter({
   getByUsername: publicProcedure
     .input(z.object({ username: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx:_ctx, input }) => {
       const [user] = await clerkClient.users.getUserList({
         username: [input.username],
       });

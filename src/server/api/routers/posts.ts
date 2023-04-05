@@ -9,8 +9,7 @@ import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/utils";
-import { UserLikes, type Post } from "@prisma/client";
-import { RouterOutputs } from "~/utils/api";
+import { type UserLikes, type Post } from "@prisma/client";
 
 const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
@@ -41,7 +40,7 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
         if (!author || !author.username) {
             throw new TRPCError({
                 code: "INTERNAL_SERVER_ERROR",
-                message: `Author ${author} not found on post ${post.id}`,
+                message: `Author ${author?.id || ''} not found on post ${post.id}`,
             });
         }
         return {
@@ -66,7 +65,7 @@ const addUserDataToPost = async (post: PostWithLike) => {
     if (!author || !author.username) {
         throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: `Author ${author} not found on post ${post.id}`,
+            message: `Author ${author?.id || ''} not found on post ${post.id}`,
         });
     }
 
