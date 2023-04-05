@@ -1,4 +1,4 @@
-import { GetStaticProps, type NextPage } from "next";
+import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 import { PageLayout } from "~/components/Layout";
 import { PostView } from "~/components/PostView";
