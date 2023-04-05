@@ -139,6 +139,9 @@ export const postsRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             const post = await ctx.prisma.post.findUnique({
                 where: { id: input.id },
+                    include: {
+                        userLikes: true, _count: { select: { userLikes: true } },
+                    }
             });
             console.log("post by id", post);
             if (!post) {
