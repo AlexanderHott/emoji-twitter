@@ -9,7 +9,8 @@ import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/utils";
-import { type Post } from "@prisma/client";
+import { UserLikes, type Post } from "@prisma/client";
+import { RouterOutputs } from "~/utils/api";
 
 const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
@@ -17,13 +18,23 @@ const ratelimit = new Ratelimit({
     analytics: true,
 });
 
-const addUserDataToPosts = async (posts: Post[]) => {
+export type PostWithLike = (Post & {
+    userLikes: UserLikes[];
+    _count: {
+        userLikes: number;
+    };
+});
+
+const addUserDataToPosts = async (posts: PostWithLike[]) => {
+    console.log("adding data to posts");
     const users = (
         await clerkClient.users.getUserList({
             userId: posts.map((post) => post.authorId),
             limit: 100,
         })
     ).map(filterUserForClient);
+
+    console.log("User count", users.length);
 
     return posts.map((post) => {
         const author = users.find((user) => user.id === post.authorId);
@@ -44,7 +55,7 @@ const addUserDataToPosts = async (posts: Post[]) => {
     });
 };
 
-const addUserDataToPost = async (post: Post) => {
+const addUserDataToPost = async (post: PostWithLike) => {
     const [author] = (
         await clerkClient.users.getUserList({
             userId: [post.authorId],
@@ -74,8 +85,11 @@ export const postsRouter = createTRPCRouter({
         const posts = await ctx.prisma.post.findMany({
             take: 100,
             orderBy: { createdAt: "desc" },
+            include: {
+                userLikes: true, _count: { select: { userLikes: true } },
+            }
         });
-        // console.log("Posts", JSON.stringify(posts, null, 2));
+        console.log("Posts", JSON.stringify(posts, null, 2));
 
         return await addUserDataToPosts(posts);
     }),
@@ -115,6 +129,9 @@ export const postsRouter = createTRPCRouter({
                     where: { authorId: input.userId },
                     orderBy: { createdAt: "desc" },
                     take: 100,
+                    include: {
+                        userLikes: true, _count: { select: { userLikes: true } },
+                    }
                 })
                 .then(addUserDataToPosts);
         }),
@@ -124,6 +141,7 @@ export const postsRouter = createTRPCRouter({
             const post = await ctx.prisma.post.findUnique({
                 where: { id: input.id },
             });
+            console.log("post by id", post);
             if (!post) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
@@ -132,4 +150,73 @@ export const postsRouter = createTRPCRouter({
             }
             return addUserDataToPost(post);
         }),
-});
+    like: protectedProcedure.input(z.object({ postId: z.string() })).mutation(async ({ ctx, input }) => {
+        const { postId } = input;
+        const userId = ctx.userId;
+        const post = await ctx.prisma.post.findUnique({
+            where: { id: postId },
+        });
+        if (!post) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Post not found",
+            });
+        }
+        const like = await ctx.prisma.userLikes.findUnique({
+            where: {
+                userId_postId: {
+                    userId, postId
+                },
+            },
+        });
+        if (like) {
+            throw new TRPCError({
+                code: "CONFLICT",
+                message: "Like already exists",
+            });
+        }
+        await ctx.prisma.userLikes.create({
+            data: {
+                postId,
+                userId,
+            },
+        });
+        // return addUserDataToPost(post);
+    }),
+    unlike: protectedProcedure.input(z.object({ postId: z.string() })).mutation(async ({ ctx, input }) => {
+
+        const { postId } = input;
+        const userId = ctx.userId;
+        const post = await ctx.prisma.post.findUnique({
+            where: { id: postId },
+        });
+        if (!post) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Post not found",
+            });
+        }
+        const like = await ctx.prisma.userLikes.findUnique({
+            where: {
+                userId_postId: {
+                    userId, postId
+                },
+            },
+        });
+
+        if (!like) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Like not found",
+            });
+        }
+
+        await ctx.prisma.userLikes.delete({
+            where: {
+                userId_postId: {
+                    userId, postId
+                },
+            },
+        });
+    })
+})
