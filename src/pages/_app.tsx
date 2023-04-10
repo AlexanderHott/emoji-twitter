@@ -1,4 +1,5 @@
 import { type AppType } from "next/app";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import { api } from "~/utils/api";
 
@@ -30,6 +31,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       </Head>
       <Toaster position="bottom-center" />
       <Component {...pageProps} />
+      <ReactQueryDevtools />
     </ClerkProvider>
   );
 };

@@ -18,7 +18,7 @@ const ratelimit = new Ratelimit({
 });
 
 export type PostWithLike = (Post & {
-    userLikes: UserLikes[];
+    userLikes: { userId: string }[];
     _count: {
         userLikes: number;
     };
@@ -50,6 +50,7 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
                 username: author.username,
                 profileImageUrl: author.profileImageUrl,
             },
+            _count: post._count,
         };
     });
 };
@@ -85,10 +86,14 @@ export const postsRouter = createTRPCRouter({
             take: 100,
             orderBy: { createdAt: "desc" },
             include: {
-                userLikes: true, _count: { select: { userLikes: true } },
+                userLikes: {
+                    where: { userId: ctx.userId || undefined },
+                    select: { userId: true }
+                },
+                _count: { select: { userLikes: true } },
             }
         });
-        console.log("Posts", JSON.stringify(posts, null, 2));
+        // console.log("Posts", JSON.stringify(posts, null, 2));
 
         return await addUserDataToPosts(posts);
     }),
@@ -139,11 +144,11 @@ export const postsRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             const post = await ctx.prisma.post.findUnique({
                 where: { id: input.id },
-                    include: {
-                        userLikes: true, _count: { select: { userLikes: true } },
-                    }
+                include: {
+                    userLikes: { where: { userId: ctx.userId || undefined } }, _count: { select: { userLikes: true } },
+                }
             });
-            console.log("post by id", post);
+            console.log("post by id", post, "userid", ctx.userId);
             if (!post) {
                 throw new TRPCError({
                     code: "NOT_FOUND",

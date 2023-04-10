@@ -12,67 +12,71 @@ export const PostView = (props: PostWithUser) => {
     const utils = api.useContext();
 
     const { mutate: like } = api.post.like.useMutation({
-        onMutate: ({ postId }) => {
-            console.log("liking post id", postId);
-
-            const prevPosts = utils.post.getAll.getData();
-            console.log("prev posts", prevPosts);
-            if (prevPosts) {
-                const prevPostsCopy = prevPosts.map(p => {
-                    if (p.post.id === postId) {
-                        return {
-                            ...p,
-                            post: {
-                                ...p.post,
-                                userLikes: [...p.post.userLikes, { createdAt: new Date(), postId, userId: "1" }]
-                            }
-                        };
-                    }
-                    return p
-                })
-                utils.post.getAll.setData(undefined, prevPostsCopy)
-            }
-            return { prevPosts }
-        },
+        // onMutate: ({ postId }) => {
+        //     console.log("liking post id", postId);
+        //
+        //     const prevPosts = utils.post.getAll.getData();
+        //     console.log("prev posts", prevPosts);
+        //     if (prevPosts) {
+        //         const newPosts = prevPosts.map(p => {
+        //             if (p.post.id === postId) {
+        //                 console.log("setting likes to ", p.post._count.userLikes + 1)
+        //                 return {
+        //                     ...p,
+        //                     post: {
+        //                         ...p.post,
+        //                         userLikes: [...p.post.userLikes, { userId: "1" }]
+        //                     },
+        //                     _count: { userLikes: p.post._count.userLikes + 1 }
+        //                 };
+        //             }
+        //             return p
+        //         })
+        //         utils.post.getAll.setData(undefined, newPosts)
+        //         console.log("new posts ", newPosts);
+        //     }
+        //     return { prevPosts }
+        // },
         onSettled: () => {
             void utils.post.invalidate();
         },
-        onError: (err, { postId }, ctx) => {
-            console.log("Error liking post", err, "postId", postId);
-            utils.post.getAll.setData(undefined, ctx?.prevPosts)
-        }
+        // onError: (err, { postId }, ctx) => {
+        //     console.log("Error liking post", err, "postId", postId);
+        //     utils.post.getAll.setData(undefined, ctx?.prevPosts)
+        // }
     })
 
     const { mutate: unlike } = api.post.unlike.useMutation({
-        onMutate: ({ postId }) => {
-            console.log("liking post id", postId);
-
-            const prevPosts = utils.post.getAll.getData();
-            console.log("prev posts", prevPosts);
-            if (prevPosts) {
-                const prevPostsCopy = prevPosts.map(p => {
-                    if (p.post.id === postId) {
-                        return {
-                            ...p,
-                            post: {
-                                ...p.post,
-                                userLikes: []
-                            }
-                        };
-                    }
-                    return p
-                })
-                utils.post.getAll.setData(undefined, prevPostsCopy)
-            }
-            return { prevPosts }
-        },
+        // onMutate: ({ postId }) => {
+        //     console.log("unliking post id", postId);
+        //
+        //     const prevPosts = utils.post.getAll.getData();
+        //     console.log("prev posts", prevPosts);
+        //     if (prevPosts) {
+        //         const prevPostsCopy = prevPosts.map(p => {
+        //             if (p.post.id === postId) {
+        //                 return {
+        //                     ...p,
+        //                     post: {
+        //                         ...p.post,
+        //                         userLikes: []
+        //                     },
+        //                     _count: { userLikes: p.post._count.userLikes - 1 }
+        //                 };
+        //             }
+        //             return p
+        //         })
+        //         utils.post.getAll.setData(undefined, prevPostsCopy)
+        //     }
+        //     return { prevPosts }
+        // },
         onSettled: () => {
             void utils.post.invalidate();
         },
-        onError: (err, { postId }, ctx) => {
-            console.log("Error unliking post", err, "postId", postId);
-            utils.post.getAll.setData(undefined, ctx?.prevPosts)
-        }
+        // onError: (err, { postId }, ctx) => {
+        //     console.log("Error unliking post", err, "postId", postId);
+        //     utils.post.getAll.setData(undefined, ctx?.prevPosts)
+        // }
     })
 
 
@@ -111,7 +115,7 @@ export const PostView = (props: PostWithUser) => {
                         }
                     }}>
                         <HeartIcon width={24} height={24} color={hasLiked ? "red" : "white"} />
-                        <span>{post.userLikes.length}</span>
+                        <span>{post._count.userLikes}</span>
                     </div>
                 </div>
             </div>
