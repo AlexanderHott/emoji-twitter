@@ -49,8 +49,8 @@ const ProfileFeed = ({ userId }: { userId: string }) => {
     );
 };
 
-const LikesFeed = ({ userId }: { userId: string }) => {
-    const { data, isLoading, error } = api.post.getLikedPosts.useQuery({ userId });
+const LikesFeed = ({ username }: { username: string }) => {
+    const { data, isLoading, error } = api.post.getLikedPosts.useQuery({ username });
     if (isLoading) return <LoadingPage />;
     if (error) return <div>{error.message}</div>;
     if (!data) return <div>no likes</div>;
@@ -101,7 +101,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
                         <ProfileFeed userId={data.id} />
                     </TabsContent>
                     <TabsContent value="likes">
-                        <LikesFeed userId={data.id} />
+                        <LikesFeed username={username} />
                     </TabsContent>
                 </Tabs>
             </PageLayout >
