@@ -230,6 +230,7 @@ export const postsRouter = createTRPCRouter({
     getLikedPosts: protectedProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx }) => {
         const posts = await ctx.prisma.userLikes.findMany({
             where: { userId: ctx.userId },
+            orderBy: { createdAt: "desc" },
             include: {
                 post: {
                     include: {
