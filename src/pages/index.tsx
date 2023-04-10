@@ -6,17 +6,47 @@ import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
 import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
+import { postSchema } from "~/schemas/post";
 import { api } from "~/utils/api";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
-    const ctx = api.useContext();
+    const utils = api.useContext();
     const { mutate, isLoading: isPosting } = api.post.create.useMutation({
-        onSuccess: () => {
-            setContent("");
-            // `void` tells typescript that we don't care about the result of the promise
-            void ctx.post.getAll.invalidate();
+        onMutate: ({ content }) => {
+            utils.post.getAll.setData(undefined, (old) => {
+                if (!old) return old;
+                if (!user || !user.username || !user.profileImageUrl) return old;
+                if (!postSchema.safeParse({ content }).success) return old;
+                setContent("");
+                return [
+                    {
+                        post: {
+                            id: Math.random().toString(),
+                            content,
+                            createdAt: new Date(),
+                            authorId: user.id,
+                            likes: 0,
+                            userLikes: [],
+                            _count: { userLikes: 0 }
+                        },
+                        author: {
+                            id: user.id,
+                            username: user.username,
+                            profileImageUrl: user.profileImageUrl,
+                        },
+                    },
+                    ...old
+                ]
+
+            });
+
         },
+        // onSuccess: () => {
+        //     setContent("");
+        //     void utils.post.getAll.invalidate();
+        // },
+        onSettled: () => utils.post.getAll.invalidate(),
         onError: (err) => {
             if (
                 err.data?.zodError?.fieldErrors.content &&

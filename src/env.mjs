@@ -18,6 +18,7 @@ const server = z.object({
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+  NODE_ENV: z.enum(["development", "test", "production"]),
 });
 
 /**

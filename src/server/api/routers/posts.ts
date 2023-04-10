@@ -11,6 +11,7 @@ import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/utils";
 // import { type UserLikes, type Post } from "@prisma/client";
 import { type Post } from "@prisma/client";
+import { postSchema } from "~/schemas/post";
 
 const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
@@ -101,13 +102,7 @@ export const postsRouter = createTRPCRouter({
     }),
     create: protectedProcedure
         .input(
-            z.object({
-                content: z
-                    .string()
-                    .emoji({ message: "Post must only contain emojis" })
-                    .min(1)
-                    .max(280),
-            })
+            postSchema
         )
         .mutation(async ({ ctx, input }) => {
             const authorId = ctx.userId;
