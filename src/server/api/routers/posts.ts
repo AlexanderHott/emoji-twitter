@@ -9,7 +9,8 @@ import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/utils";
-import { type UserLikes, type Post } from "@prisma/client";
+// import { type UserLikes, type Post } from "@prisma/client";
+import { type Post } from "@prisma/client";
 
 const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
@@ -50,7 +51,7 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
                 username: author.username,
                 profileImageUrl: author.profileImageUrl,
             },
-            _count: post._count,
+            // _count: post._count,
         };
     });
 };
@@ -77,6 +78,7 @@ const addUserDataToPost = async (post: PostWithLike) => {
             username: author.username,
             profileImageUrl: author.profileImageUrl,
         },
+        // _count: post._count,
     };
 };
 
@@ -145,7 +147,11 @@ export const postsRouter = createTRPCRouter({
             const post = await ctx.prisma.post.findUnique({
                 where: { id: input.id },
                 include: {
-                    userLikes: { where: { userId: ctx.userId || undefined } }, _count: { select: { userLikes: true } },
+                    userLikes: {
+                        where: { userId: ctx.userId || undefined },
+                        select: { userId: true }
+                    },
+                    _count: { select: { userLikes: true } },
                 }
             });
             console.log("post by id", post, "userid", ctx.userId);

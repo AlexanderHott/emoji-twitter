@@ -1,9 +1,10 @@
-import { type GetStaticProps, type NextPage } from "next";
+// import { type GetStaticProps, type NextPage } from "next";
+import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { PageLayout } from "~/components/Layout";
 import { PostView } from "~/components/PostView";
-import { generateSSGHelper } from "~/server/utils";
+// import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
 
 // export const getStaticProps: GetStaticProps = async (context) => {
@@ -28,7 +29,7 @@ import { api } from "~/utils/api";
 // };
 
 // const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
-const SinglePostPage: NextPage<{}> = ({ }) => {
+const SinglePostPage: NextPage = () => {
     const router = useRouter();
     const { id } = router.query as { id: string };
     const { data, isLoading } = api.post.getById.useQuery({ id });
