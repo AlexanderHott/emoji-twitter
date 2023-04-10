@@ -3,6 +3,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { PageLayout } from "~/components/Layout";
+import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
 // import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
@@ -33,7 +34,7 @@ const SinglePostPage: NextPage = () => {
     const router = useRouter();
     const { id } = router.query as { id: string };
     const { data, isLoading } = api.post.getById.useQuery({ id });
-    if (isLoading || !data) return <div>loading</div>;
+    if (isLoading || !data) return <LoadingPage />
     // if (!data) return <div>404</div>;
 
     return (

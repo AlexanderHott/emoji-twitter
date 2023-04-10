@@ -33,5 +33,6 @@ model UserLikes {
     post Post @relation(fields: [postId], references: [id])
 
     @@id([userId, postId])
+    @@unique([userId, postId])
     @@index([postId])
 }
