@@ -4,7 +4,7 @@ import Image from "next/image";
 import { PageLayout } from "~/components/Layout";
 import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/Tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/Tabs";
 import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
 
