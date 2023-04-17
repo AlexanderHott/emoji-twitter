@@ -9,104 +9,112 @@ import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const ssg = generateSSGHelper();
+  const ssg = generateSSGHelper();
 
-    const slug = context.params?.slug;
+  const slug = context.params?.slug;
 
-    if (typeof slug !== "string") throw new Error("no slug");
+  if (typeof slug !== "string") throw new Error("no slug");
 
-    const username = slug.replace("@", "");
+  const username = slug.replace("@", "");
 
-    await ssg.profile.getByUsername.prefetch({ username });
+  await ssg.profile.getByUsername.prefetch({ username });
 
-    return {
-        props: {
-            trpcState: ssg.dehydrate(),
-            username,
-        },
-    };
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      username,
+    },
+  };
 };
 
 export const getStaticPaths = () => {
-    return { paths: [], fallback: "blocking" };
+  return { paths: [], fallback: "blocking" };
 };
 
 const ProfileFeed = ({ userId }: { userId: string }) => {
-    const { data, isLoading, error } = api.post.getByUserId.useQuery({
-        userId,
-    });
+  const { data, isLoading, error } = api.post.getByUserId.useQuery({
+    userId,
+  });
 
-    if (isLoading) return <LoadingPage />;
-    if (error) return <div>{error.message}</div>;
-    if (!data || data.length === 0) return <div>User has no posts yet.</div>;
+  if (isLoading) return <LoadingPage />;
+  if (error) return <div>{error.message}</div>;
+  if (!data || data.length === 0) return <div>User has no posts yet.</div>;
 
-    return (
-        <div>
-            {data.map(({ post, author }) => (
-                <PostView post={post} author={author} key={post.id} />
-            ))}
-        </div>
-    );
+  return (
+    <div>
+      {data.map(({ post, author }) => (
+        <PostView post={post} author={author} key={post.id} />
+      ))}
+    </div>
+  );
 };
 
 const LikesFeed = ({ username }: { username: string }) => {
-    const { data, isLoading, error } = api.post.getLikedPosts.useQuery({ username });
-    if (isLoading) return <LoadingPage />;
-    if (error) return <div>{error.message}</div>;
-    if (!data) return <div>no likes</div>;
+  const { data, isLoading, error } = api.post.getLikedPosts.useQuery({
+    username,
+  });
+  if (isLoading) return <LoadingPage />;
+  if (error) return <div>{error.message}</div>;
+  if (!data) return <div>no likes</div>;
 
-    return (
-        <div>
-            {data.map(({ post, author }) => (
-                <PostView post={post} author={author} key={post.id} />
-            ))}
-        </div>
-    );
-}
-
+  return (
+    <div>
+      {data.map(({ post, author }) => (
+        <PostView post={post} author={author} key={post.id} />
+      ))}
+    </div>
+  );
+};
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-    const { data } = api.profile.getByUsername.useQuery({
-        username,
-    });
+  const { data } = api.profile.getByUsername.useQuery({
+    username,
+  });
 
-    if (!data) {
-        return <div>404</div>;
-    }
+  const { data: emoji } = api.profile.getMostUsedEmojis.useQuery({
+    userId: data?.id,
+  });
 
-    return (
-        <>
-            <Head>
-                <title>{username}</title>
-            </Head>
-            <PageLayout>
-                <div className="relative h-36 border-slate-400 bg-slate-600">
-                    <Image
-                        src={data.profileImageUrl}
-                        alt={`${username}'s profile picture`}
-                        width={128}
-                        height={128}
-                        className=" absolute bottom-0 left-0 -mb-16 ml-4 rounded-full border-4 border-black bg-black"
-                    />
-                </div>
-                <div className="mt-16" />
-                <div className="p-4 text-2xl font-bold">{`@${username}`}</div>
-                <Tabs defaultValue="posts" >
-                    <TabsList className="w-full mb-2">
-                        <TabsTrigger value="posts">Posts</TabsTrigger>
-                        <TabsTrigger value="likes">Likes</TabsTrigger>
-                    </TabsList>
-                    <div className="w-full border-b border-slate-400" />
-                    <TabsContent value="posts">
-                        <ProfileFeed userId={data.id} />
-                    </TabsContent>
-                    <TabsContent value="likes">
-                        <LikesFeed username={username} />
-                    </TabsContent>
-                </Tabs>
-            </PageLayout >
-        </>
-    );
+  if (!data) {
+    return <div>404</div>;
+  }
+
+  return (
+    <>
+      <Head>
+        <title>{username}</title>
+      </Head>
+      <PageLayout>
+        <div className="relative h-36 border-slate-400 bg-slate-600">
+          <Image
+            src={data.profileImageUrl}
+            alt={`${username}'s profile picture`}
+            width={128}
+            height={128}
+            className="absolute bottom-0 left-0 -mb-16 ml-4 rounded-full border-4 border-black bg-black"
+          />
+          <div className="absolute bottom-0 left-24 -mb-16 ml-4 rounded-full border-4 border-black bg-black">
+            {emoji}
+          </div>
+        </div>
+        <div className="mt-16" />
+        <div className="p-4 text-2xl font-bold">{`@${username}`}</div>
+        <Tabs defaultValue="posts">
+          <TabsList className="mb-2 w-full">
+            <TabsTrigger value="posts">Posts</TabsTrigger>
+            <TabsTrigger value="likes">Likes</TabsTrigger>
+          </TabsList>
+          <div className="w-full border-b border-slate-400" />
+          <TabsContent value="posts">
+            <ProfileFeed userId={data.id} />
+          </TabsContent>
+          <TabsContent value="likes">
+            <LikesFeed username={username} />
+          </TabsContent>
+        </Tabs>
+      </PageLayout>
+    </>
+  );
 };
 
 export default ProfilePage;
