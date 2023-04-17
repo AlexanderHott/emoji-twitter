@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
 import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
+import { Button } from "~/components/ui/Button";
 import { postSchema } from "~/schemas/post";
 import { api } from "~/utils/api";
 
@@ -63,7 +64,7 @@ const CreatePostWizard = () => {
   }
 
   return (
-    <div className="flex w-full gap-3">
+    <div className="flex w-full items-center gap-3">
       <Image
         width={56}
         height={56}
@@ -84,9 +85,13 @@ const CreatePostWizard = () => {
           }
         }}
       />
-      <button disabled={isPosting} onClick={() => mutate({ content })}>
+      <Button
+        variant="ghost"
+        disabled={isPosting}
+        onClick={() => mutate({ content })}
+      >
         Post
-      </button>
+      </Button>
     </div>
   );
 };
