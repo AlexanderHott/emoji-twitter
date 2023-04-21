@@ -227,20 +227,9 @@ export const postsRouter = createTRPCRouter({
             },
         });
     }),
-    getLikedPosts: protectedProcedure.input(z.object({ username: z.string() })).query(async ({ ctx, input }) => {
-        const [user] = await clerkClient.users.getUserList({
-            username: [input.username],
-            limit: 1,
-        });
-        if (!user) {
-            throw new TRPCError({
-                code: "NOT_FOUND",
-                message: "User not found",
-            });
-        }
+    getLikedPosts: protectedProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
         const posts = await ctx.prisma.userLikes.findMany({
-            where: { userId: user.id },
-            orderBy: { createdAt: "desc" },
+            where: { userId: input.userId },
             include: {
                 post: {
                     include: {

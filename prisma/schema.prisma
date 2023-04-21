@@ -20,6 +20,7 @@ model Post {
     likes    Int    @default(0)
 
     userLikes UserLikes[]
+    repost    Repost[]
 
     @@index([authorId])
 }
@@ -33,6 +34,16 @@ model UserLikes {
     post Post @relation(fields: [postId], references: [id])
 
     @@id([userId, postId])
+    @@unique([userId, postId])
+    @@index([postId])
+}
+
+model Repost {
+    postId String
+    post   Post   @relation(fields: [postId], references: [id])
+
+    userId String
+
     @@unique([userId, postId])
     @@index([postId])
 }

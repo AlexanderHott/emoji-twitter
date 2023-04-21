@@ -1,6 +1,7 @@
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { PageLayout } from "~/components/Layout";
 import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
@@ -49,8 +50,8 @@ const ProfileFeed = ({ userId }: { userId: string }) => {
     );
 };
 
-const LikesFeed = ({ username }: { username: string }) => {
-    const { data, isLoading, error } = api.post.getLikedPosts.useQuery({ username });
+const LikesFeed = ({ userId }: { userId: string }) => {
+    const { data, isLoading, error } = api.post.getLikedPosts.useQuery({ userId });
     if (isLoading) return <LoadingPage />;
     if (error) return <div>{error.message}</div>;
     if (!data) return <div>no likes</div>;
@@ -66,13 +67,22 @@ const LikesFeed = ({ username }: { username: string }) => {
 
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-    const { data } = api.profile.getByUsername.useQuery({
+    const { data: user } = api.profile.getByUsername.useQuery({
         username,
     });
+    const router = useRouter();
 
-    if (!data) {
+    // if (!router.isReady) return null;
+    if (!user) {
         return <div>404</div>;
     }
+
+
+                            // onClick={() => router.push(
+                            //     { pathname: `@${username}?tab=posts` },
+                            //     undefined,
+                            //     { shallow: true })}
+
 
     return (
         <>
@@ -82,7 +92,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             <PageLayout>
                 <div className="relative h-36 border-slate-400 bg-slate-600">
                     <Image
-                        src={data.profileImageUrl}
+                        src={user.profileImageUrl}
                         alt={`${username}'s profile picture`}
                         width={128}
                         height={128}
@@ -91,17 +101,22 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
                 </div>
                 <div className="mt-16" />
                 <div className="p-4 text-2xl font-bold">{`@${username}`}</div>
-                <Tabs defaultValue="posts" >
+                <Tabs defaultValue={"posts"} >
                     <TabsList className="w-full mb-2">
-                        <TabsTrigger value="posts">Posts</TabsTrigger>
-                        <TabsTrigger value="likes">Likes</TabsTrigger>
+                        <TabsTrigger
+                            value="posts"
+                        >
+                            Posts
+                        </TabsTrigger>
+                        <TabsTrigger value="likes">
+                            Likes</TabsTrigger>
                     </TabsList>
                     <div className="w-full border-b border-slate-400" />
                     <TabsContent value="posts">
-                        <ProfileFeed userId={data.id} />
+                        <ProfileFeed userId={user.id} />
                     </TabsContent>
                     <TabsContent value="likes">
-                        <LikesFeed username={username} />
+                        <LikesFeed userId={user.id} />
                     </TabsContent>
                 </Tabs>
             </PageLayout >
