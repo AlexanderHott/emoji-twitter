@@ -243,5 +243,16 @@ export const postsRouter = createTRPCRouter({
             }
         });
         return await addUserDataToPosts(posts.map(p => p.post));
+    }),
+    addRepost: protectedProcedure.input(z.object({ userId: z.string(), postId: z.string() })).mutation(async ({ ctx, input }) => {
+        const { userId, postId } = input;
+        await ctx.prisma.repost.create({ data: { userId, postId } })
+    }),
+    removeRepost: protectedProcedure.input(z.object({ userId: z.string(), postId: z.string() })).mutation(async ({ ctx, input }) => {
+        const { userId, postId } = input;
+        await ctx.prisma.repost.delete({ where: { userId_postId: { userId, postId } } })
+    }),
+    reposts: publicProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
+        return await ctx.prisma.repost.findMany({ where: { userId: input.userId } })
     })
 })
