@@ -1,7 +1,7 @@
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { PageLayout } from "~/components/Layout";
 import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
@@ -70,7 +70,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
     const { data: user } = api.profile.getByUsername.useQuery({
         username,
     });
-    const router = useRouter();
+    // const router = useRouter();
 
     // if (!router.isReady) return null;
     if (!user) {
@@ -78,10 +78,10 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
     }
 
 
-                            // onClick={() => router.push(
-                            //     { pathname: `@${username}?tab=posts` },
-                            //     undefined,
-                            //     { shallow: true })}
+    // onClick={() => router.push(
+    //     { pathname: `@${username}?tab=posts` },
+    //     undefined,
+    //     { shallow: true })}
 
 
     return (
@@ -106,10 +106,11 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
                         <TabsTrigger
                             value="posts"
                         >
-                            Posts
+                            Posts & Reposts
                         </TabsTrigger>
                         <TabsTrigger value="likes">
-                            Likes</TabsTrigger>
+                            Likes
+                        </TabsTrigger>
                     </TabsList>
                     <div className="w-full border-b border-slate-400" />
                     <TabsContent value="posts">
