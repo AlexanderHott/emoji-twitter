@@ -119,6 +119,7 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
+    console.log("index loaded")
     const { isLoaded: userIsLoaded, isSignedIn } = useUser();
 
     // start loading posts immediately
@@ -128,6 +129,7 @@ const Home: NextPage = () => {
     return (
         <PageLayout>
             <div className="flex border-b border-slate-400 p-4">
+
                 {isSignedIn && <CreatePostWizard />}
                 {isSignedIn && <SignOutButton />}
                 {!isSignedIn && <SignInButton />}

@@ -37,9 +37,13 @@ const ProfileFeed = ({ userId }: { userId: string }) => {
         userId,
     });
 
-    if (isLoading) return <LoadingPage />;
+    const { data: postsAndReposts, isLoading: arePostsAndRepostsLoading } = api.post.postsAndReposts.useQuery({ userId })
+
+    if (isLoading || arePostsAndRepostsLoading) return <LoadingPage />;
     if (error) return <div>{error.message}</div>;
     if (!data || data.length === 0) return <div>User has no posts yet.</div>;
+
+    console.log("Posts and Reposts", postsAndReposts?.length, postsAndReposts)
 
     return (
         <div>

@@ -255,25 +255,25 @@ export const postsRouter = createTRPCRouter({
     reposts: publicProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
         return await ctx.prisma.repost
             .findMany({
-                where: { authorId: input.userId },
+                where: { userId: input.userId },
                 orderBy: { createdAt: "desc" },
                 take: 100,
                 include: {
-                    userLikes: true, _count: { select: { userLikes: true } },
+                    post: { include: { userLikes: true, _count: { select: { userLikes: true } } } }
                 }
             })
-            .then(addUserDataToPosts);
     }),
     postsAndReposts: publicProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
-        const posts = ctx.prisma.post
-            .findMany({
-                where: { authorId: input.userId },
-                orderBy: { createdAt: "desc" },
-                take: 100,
-                include: {
-                    userLikes: true, _count: { select: { userLikes: true } },
-                }
-            })
-            .then(addUserDataToPosts);
+        return ctx.prisma.$queryRaw<{ content: string, authorId: string, likes: number, createdAt: Date }[]>`
+            SELECT content, authorId, likes, createdAt 
+            FROM Post 
+            WHERE authorId=${input.userId} 
+            UNION ALL 
+            SELECT p.content, p.authorId, p.likes, r.createdAt 
+            FROM Post p 
+            JOIN Repost r on (
+                p.id = r.PostId AND r.userId = ${input.userId}
+            )
+            ORDER BY createdAt;        `
     }),
 })
