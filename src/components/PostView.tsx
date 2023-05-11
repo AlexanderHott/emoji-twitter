@@ -84,6 +84,7 @@ export const PostView = (props: PostWithUser) => {
 
     return (
         <div className="flex border-b border-slate-400 p-4 gap-1" key={post.id}>
+            <span>{post}</span>
             <Link href={`/@${author.username}`}>
                 <Image
                     width={36}
@@ -115,7 +116,7 @@ export const PostView = (props: PostWithUser) => {
                         }
                     }}>
                         <HeartIcon width={24} height={24} color={hasLiked ? "red" : "white"} />
-                        <span>{post._count.userLikes}</span>
+                        {/* <span>{post._count.userLikes}</span> */}
                     </div>
                 </div>
             </div>

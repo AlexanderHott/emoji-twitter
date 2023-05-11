@@ -8,14 +8,110 @@
 - [ ] profile banner
 - [ ] bite (no un-bite)
 
+
 ```sql
 SELECT 
+    false as repost,
+    id, 
+    createdAt,
+    content,
+    authorId,
+    likes,
+    UserLikes.count_userLikes
+FROM Post 
+LEFT JOIN (
+    SELECT 
+        postId, 
+        COUNT(*) AS count_userLikes 
+    FROM UserLikes 
+    WHERE 1=1 
+    GROUP BY postId
+) AS UserLikes 
+ON (
+   Post.id = UserLikes.postId
+)
+WHERE Post.authorId = 'user_2NQN036YRDdASJbRCOqAX7rMZf6' 
+UNION ALL
+SELECT 
+    true as repost,
+    p.id,
+    r.createdAt, 
+    p.content, 
+    p.authorId, 
+    p.likes,
+    UserLikes.count_userLikes
+FROM Post p 
+JOIN Repost r on (
+    p.id = r.PostId AND r.userId = 'user_2NQN036YRDdASJbRCOqAX7rMZf6' 
+) 
+LEFT JOIN (
+    SELECT 
+        postId, 
+        COUNT(*) AS count_userLikes 
+    FROM UserLikes 
+    WHERE 1=1 
+    GROUP BY postId
+) AS UserLikes 
+ON (
+   p.id = UserLikes.postId
+)
+WHERE p.authorId = 'user_2NQN036YRDdASJbRCOqAX7rMZf6' 
+
+ORDER BY createdAt DESC;
+```
+
+```sql
+SELECT 
+    `id`, 
+    `createdAt`,
+    `content`,
+    `authorId`,
+    `likes`,
+    `UserLikes`.`count_userLikes`
+FROM `Post` 
+LEFT JOIN (
+    SELECT 
+        `postId`, 
+        COUNT(*) AS `count_userLikes` 
+    FROM `UserLikes` 
+    WHERE 1=1 
+    GROUP BY `postId`
+) AS `UserLikes` 
+ON (
+   `Post`.`id` = `UserLikes`.`postId`
+)
+WHERE `Post`.`authorId` = 'user_2NQN036YRDdASJbRCOqAX7rMZf6' 
+ORDER BY `Post`.`createdAt` DESC;
+```
+
+```sql
+SELECT (
+    `emoji-twitter`.`Post`.`id`, 
+    `emoji-twitter`.`Post`.`createdAt`, 
+    `emoji-twitter`.`Post`.`content`, 
+    `emoji-twitter`.`Post`.`authorId`, 
+    `emoji-twitter`.`Post`.`likes`, 
+    `count_userLikes`.`userLikes`
+)
+FROM `emoji-twitter`.`Post`
+LEFT JOIN (
+    SELECT ( 
+        `emoji-twitter`.`UserLikes`.`postId`, 
+        COUNT(*) AS `userLikes` 
+    )
+    FROM `emoji-twitter`.`UserLikes` 
+    WHERE 1=1 
+    GROUP BY `emoji-twitter`.`UserLikes`.`postId`
+) AS `count_userLikes` 
+ON (`emoji-twitter`.`Post`.`id` = `count_userLikes`.`postId`) 
+WHERE `emoji-twitter`.`Post`.`authorId` = 'user_2NQN036YRDdASJbRCOqAX7rMZf6' (
     `emoji-twitter`.`Post`.`id`, 
     `emoji-twitter`.`Post`.`createdAt`, 
     `emoji-twitter`.`Post`.`content`, 
     `emoji-twitter`.`Post`.`authorId`, 
     `emoji-twitter`.`Post`.`likes`, 
     `count_userLikes`.`userLikes` 
+)
 FROM `emoji-twitter`.`Post`
 LEFT JOIN (
     SELECT 
@@ -27,24 +123,6 @@ LEFT JOIN (
 ) AS `count_userLikes` 
 ON (`emoji-twitter`.`Post`.`id` = `count_userLikes`.`postId`) 
 WHERE `emoji-twitter`.`Post`.`authorId` = 'user_2NQN036YRDdASJbRCOqAX7rMZf6' 
-    `emoji-twitter`.`Post`.`id`, 
-    `emoji-twitter`.`Post`.`createdAt`, 
-    `emoji-twitter`.`Post`.`content`, 
-    `emoji-twitter`.`Post`.`authorId`, 
-    `emoji-twitter`.`Post`.`likes`, 
-    `count_userLikes`.`userLikes` 
-FROM `emoji-twitter`.`Post`
-LEFT JOIN (
-    SELECT 
-        `emoji-twitter`.`UserLikes`.`postId`, 
-        COUNT(*) AS `userLikes` 
-    FROM `emoji-twitter`.`UserLikes` 
-    WHERE 1=1 
-    GROUP BY `emoji-twitter`.`UserLikes`.`postId`
-) AS `count_userLikes` 
-ON (`emoji-twitter`.`Post`.`id` = `count_userLikes`.`postId`) 
-WHERE `emoji-twitter`.`Post`.`authorId` = 'user_2NQN036YRDdASJbRCOqAX7rMZf6' 
-ORDER BY `emoji-twitter`.`Post`.`createdAt` DESC
 ORDER BY `emoji-twitter`.`Post`.`createdAt` DESC;
 ```
 

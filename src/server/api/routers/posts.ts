@@ -264,16 +264,65 @@ export const postsRouter = createTRPCRouter({
             })
     }),
     postsAndReposts: publicProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
-        return ctx.prisma.$queryRaw<{ content: string, authorId: string, likes: number, createdAt: Date }[]>`
-            SELECT content, authorId, likes, createdAt 
-            FROM Post 
-            WHERE authorId=${input.userId} 
-            UNION ALL 
-            SELECT p.content, p.authorId, p.likes, r.createdAt 
-            FROM Post p 
-            JOIN Repost r on (
-                p.id = r.PostId AND r.userId = ${input.userId}
-            )
-            ORDER BY createdAt;        `
+        return ctx.prisma.$queryRaw<{ repost: boolean, id: string, createdAt: Date, content: string, authorId: string, likes: number, userLikes: number }[]>`
+SELECT 
+    false as repost,
+    id, 
+    createdAt,
+    content,
+    authorId,
+    likes,
+    IFNULL(UserLikes.userLikes, 0) as userLikes
+FROM Post 
+LEFT JOIN (
+    SELECT 
+        postId, 
+        COUNT(*) AS userLikes 
+    FROM UserLikes 
+    WHERE 1=1 
+    GROUP BY postId
+) AS UserLikes 
+ON (
+   Post.id = UserLikes.postId
+)
+WHERE Post.authorId = ${input.userId}
+UNION ALL
+SELECT 
+    true as repost,
+    p.id,
+    r.createdAt, 
+    p.content, 
+    p.authorId, 
+    p.likes,
+    IFNULL(UserLikes.userLikes, 0) as userLikes
+FROM Post p 
+JOIN Repost r on (
+    p.id = r.PostId AND r.userId = ${input.userId}
+) 
+LEFT JOIN (
+    SELECT 
+        postId, 
+        COUNT(*) AS userLikes 
+    FROM UserLikes 
+    WHERE 1=1 
+    GROUP BY postId
+) AS UserLikes 
+ON (
+   p.id = UserLikes.postId
+)
+WHERE p.authorId = ${input.userId} 
+
+ORDER BY createdAt DESC;
+        `.then(addUserDataToPosts)
     }),
+    // SELECT content, authorId, likes, createdAt 
+    // FROM Post 
+    // WHERE authorId=${input.userId} 
+    // UNION ALL 
+    // SELECT p.content, p.authorId, p.likes, r.createdAt 
+    // FROM Post p 
+    // JOIN Repost r on (
+    //     p.id = r.PostId AND r.userId = ${input.userId}
+    // )
+    // ORDER BY createdAt;        `
 })

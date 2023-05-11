@@ -42,12 +42,17 @@ const ProfileFeed = ({ userId }: { userId: string }) => {
     if (isLoading || arePostsAndRepostsLoading) return <LoadingPage />;
     if (error) return <div>{error.message}</div>;
     if (!data || data.length === 0) return <div>User has no posts yet.</div>;
+    if (!postsAndReposts || postsAndReposts.length === 0) return <div>User has no posts yet.</div>;
 
     console.log("Posts and Reposts", postsAndReposts?.length, postsAndReposts)
 
     return (
         <div>
-            {data.map(({ post, author }) => (
+            {/* {data.map(({ post, author }) => ( */}
+            {/*     <PostView post={post} author={author} key={post.id} /> */}
+            {/* ))} */}
+
+            {postsAndReposts.map(({ post, author }) => (
                 <PostView post={post} author={author} key={post.id} />
             ))}
         </div>
