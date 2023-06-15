@@ -122,7 +122,10 @@ export const PostView = (props: PostWithUser) => {
             className="ml-4 text-slate-600"
           />
           <div className="text-sm font-bold text-slate-600">
-            <Link className="hover:underline" href={`/@${author.username || ""}`}>
+            <Link
+              className="hover:underline"
+              href={`/@${author.username || ""}`}
+            >
               @{author.username}
             </Link>{" "}
             Reposted
@@ -141,8 +144,13 @@ export const PostView = (props: PostWithUser) => {
         </Link>
         <div className="flex w-full flex-col overflow-auto">
           <div className="flex text-slate-300">
-            <Link className="hover:underline" href={`/@${mainAuthor.username || ""}`}>
-              <span className="font-bold">{`@${mainAuthor.username || ""}`}</span>
+            <Link
+              className="hover:underline"
+              href={`/@${mainAuthor.username || ""}`}
+            >
+              <span className="font-bold">{`@${
+                mainAuthor.username || ""
+              }`}</span>
             </Link>
             <span className="px-1">·</span>
             <Link href={`/post/${post.id}`}>
