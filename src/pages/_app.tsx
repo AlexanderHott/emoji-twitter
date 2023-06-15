@@ -19,7 +19,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <meta name="og:title" content="Emoji Twitter" />
         <meta
           name="og:image"
-          content="https://emoji-twitter-seven.vercel.app/api/og"
+          content={
+            // Because OG images must have a absolute URL, we use the
+            // `VERCEL_URL` environment variable to get the deployment’s URL.
+            // More info:
+            // https://vercel.com/docs/concepts/projects/environment-variables
+            `${
+              process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : ''
+            }/api/og`
+          }
         />
         <meta
           name="og:image:secure_url"
