@@ -96,19 +96,19 @@ export const PostView = (props: PostWithUser) => {
 
   return (
     <div className="flex gap-1 border-b border-slate-400 p-4" key={post.id}>
-      <Link href={`/@${author.username}`}>
+      <Link href={`/@${author.username}`} className="shrink-0">
         <Image
           width={36}
           height={36}
           src={author.profileImageUrl}
           alt="pfp"
-          className="h-12 w-12 rounded-full"
+          className="h-9 w-9 rounded-full"
         />
       </Link>
-      <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col overflow-auto">
         <div className="flex text-slate-300">
           <Link className="hover:underline" href={`/@${author.username}`}>
-            <span>{`@${author.username}`}</span>
+            <span className="font-bold">{`@${author.username}`}</span>
           </Link>
           <span className="px-1">·</span>
           <Link href={`/post/${post.id}`}>
@@ -117,7 +117,7 @@ export const PostView = (props: PostWithUser) => {
             </span>
           </Link>
         </div>
-        <span className="text-2xl">{post.content}</span>
+        <span className="text-2xl break-words">{post.content}</span>
         <div className="flex pt-2">
           <SignedIn>
             <div
