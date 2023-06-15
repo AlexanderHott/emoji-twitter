@@ -35,13 +35,13 @@ export const profileRouter = createTRPCRouter({
             { gt: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000) },
         },
       });
-      let charCount = new Map();
+      const charCount = new Map<string, number>();
       let maxChar = "";
       let maxCount = 0;
 
-      for (let post of posts) {
-        for (let char of post.content) {
-          let count = charCount.get(char) || 0;
+      for (const post of posts) {
+        for (const char of post.content) {
+          const count = charCount.get(char) || 0;
           charCount.set(char, count + 1);
 
           if (count + 1 > maxCount) {
