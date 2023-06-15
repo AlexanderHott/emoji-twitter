@@ -29,12 +29,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
             }/api/og`
           }
         />
-        <meta
-          name="og:image:secure_url"
-          content="https://emoji-twitter-seven.vercel.app/api/og"
-        />
         <meta name="og:description" content="🗿🗿🗿" />
-        <meta name="og:url" content="https://emoji-twitter-seven.vercel.app/" />
+        <meta name="og:url" content={"https://" + process.env.VERCEL_URL}/>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" href="/favicon.ico" />
