@@ -5,20 +5,11 @@ import Link from "next/link";
 import { api, type RouterOutputs } from "~/utils/api";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { useUser, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/Dialog";
-import { Button } from "./ui/Button";
 
 dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["post"]["getAll"][number];
 export const PostView = (props: PostWithUser) => {
-  const { user, isSignedIn, isLoaded } = useUser();
+  const { isLoaded } = useUser();
   const { post, author } = props;
   const utils = api.useContext();
 

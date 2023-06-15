@@ -1,4 +1,4 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Image from "next/image";
 import { useState } from "react";
@@ -105,12 +105,13 @@ const Feed = () => {
 
   if (postIsLoading) return <LoadingPage />;
 
-  if (postError)
+  if (postError) {
     return (
       <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
         Failed to load posts
       </div>
     );
+  }
 
   return (
     <div className="flex flex-col">
