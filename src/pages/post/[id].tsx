@@ -40,7 +40,7 @@ const SinglePostPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{`${post.post.content} - @${post.author.username}`}</title>
+        <title>{`${post.post.content} - @${post.author.username || ""}`}</title>
       </Head>
       <PageLayout>
         <PostView {...post}/>

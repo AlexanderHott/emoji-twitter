@@ -9,7 +9,7 @@ import {
   ShareIcon,
 } from "@heroicons/react/24/outline";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
-import { SlimUser } from "~/utils/types";
+import { type SlimUser } from "~/utils/types";
 import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
@@ -122,7 +122,7 @@ export const PostView = (props: PostWithUser) => {
             className="ml-4 text-slate-600"
           />
           <div className="text-sm font-bold text-slate-600">
-            <Link className="hover:underline" href={`/@${author.username}`}>
+            <Link className="hover:underline" href={`/@${author.username || ""}`}>
               @{author.username}
             </Link>{" "}
             Reposted
@@ -130,7 +130,7 @@ export const PostView = (props: PostWithUser) => {
         </div>
       )}
       <div className="flex gap-1">
-        <Link href={`/@${mainAuthor.username}`} className="shrink-0">
+        <Link href={`/@${mainAuthor.username || ""}`} className="shrink-0">
           <Image
             width={36}
             height={36}
@@ -141,8 +141,8 @@ export const PostView = (props: PostWithUser) => {
         </Link>
         <div className="flex w-full flex-col overflow-auto">
           <div className="flex text-slate-300">
-            <Link className="hover:underline" href={`/@${mainAuthor.username}`}>
-              <span className="font-bold">{`@${mainAuthor.username}`}</span>
+            <Link className="hover:underline" href={`/@${mainAuthor.username || ""}`}>
+              <span className="font-bold">{`@${mainAuthor.username || ""}`}</span>
             </Link>
             <span className="px-1">·</span>
             <Link href={`/post/${post.id}`}>
@@ -188,7 +188,7 @@ export const PostView = (props: PostWithUser) => {
             <div
               className="flex cursor-pointer"
               onClick={() => {
-                navigator.clipboard.writeText(
+                void navigator.clipboard.writeText(
                   `https://${process.env.VERCEL_URL ?? "localhost:3000"}/post/${
                     post.id
                   }`
