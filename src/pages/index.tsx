@@ -106,7 +106,7 @@ const Feed = () => {
     data: posts,
     isLoading: postIsLoading,
     error: postError,
-  } = api.post.getAll2.useQuery();
+  } = api.post.getAll.useQuery();
 
   if (postIsLoading) return <LoadingPage />;
 

@@ -8,12 +8,9 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { filterUserForClient } from "~/server/utils";
-// import { type UserLikes, type Post } from "@prisma/client";
 import { type Post } from "@prisma/client";
 import { postSchema } from "~/schemas/post";
 import { type User } from "@clerk/nextjs/api";
-import { on } from "events";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -63,19 +60,13 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
 };
 
 const addUserDataToPost = async (post: PostWithLike) => {
-  const [author] = (
-    await clerkClient.users.getUserList({
-      userId: [post.authorId],
-      limit: 100,
-    })
-  ).map(filterUserForClient);
-
-  if (!author || !author.username) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `Author ${author?.id || ""} not found on post ${post.id}`,
-    });
-  }
+  const author = await clerkClient.users.getUser(post.authorId);
+  const repostAuthor =
+    post.authorId === post.repostAuthorId
+      ? author
+      : post.repostAuthorId !== null
+      ? await clerkClient.users.getUser(post.repostAuthorId)
+      : undefined;
 
   return {
     post,
@@ -84,7 +75,13 @@ const addUserDataToPost = async (post: PostWithLike) => {
       username: author.username,
       profileImageUrl: author.profileImageUrl,
     },
-    // _count: post._count,
+    repostAuthor: repostAuthor
+      ? {
+          id: repostAuthor.id,
+          username: repostAuthor.username,
+          profileImageUrl: repostAuthor.profileImageUrl,
+        }
+      : undefined,
   };
 };
 
@@ -92,22 +89,6 @@ export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const posts = await ctx.prisma.post.findMany({
       take: 100,
-      orderBy: { createdAt: "desc" },
-      include: {
-        userLikes: {
-          where: { userId: ctx.userId || undefined },
-          select: { userId: true },
-        },
-        _count: { select: { userLikes: true } },
-      },
-    });
-    // console.log("Posts", JSON.stringify(posts, null, 2));
-
-    return await addUserDataToPosts(posts);
-  }),
-  getAll2: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.post.findMany({
-      take: 25,
       orderBy: { createdAt: "desc" },
 
       include: {
@@ -139,6 +120,27 @@ export const postsRouter = createTRPCRouter({
       });
 
       return post;
+    }),
+  repost: protectedProcedure
+    .input(z.object({ content: z.string(), repostAuthorId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { content, repostAuthorId } = input;
+
+      const { success } = await ratelimit.limit(ctx.userId);
+      if (!success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "You are posting too fast",
+        });
+      }
+
+      return await ctx.prisma.post.create({
+        data: {
+          content,
+          authorId: ctx.userId,
+          repostAuthorId,
+        },
+      });
     }),
   getByUserId: publicProcedure
     .input(z.object({ userId: z.string() }))

@@ -3,14 +3,17 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import Link from "next/link";
 import { api, type RouterOutputs } from "~/utils/api";
-import { HeartIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathRoundedSquareIcon,
+  HeartIcon,
+  ShareIcon,
+} from "@heroicons/react/24/outline";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
-import { type User } from "@clerk/nextjs/api";
-import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/outline";
 import { SlimUser } from "~/utils/types";
+import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
-type PostWithUser = RouterOutputs["post"]["getAll2"][number];
+type PostWithUser = RouterOutputs["post"]["getAll"][number];
 export const PostView = (props: PostWithUser) => {
   const { isLoaded } = useUser();
   const { post, author, repostAuthor } = props;
@@ -94,6 +97,12 @@ export const PostView = (props: PostWithUser) => {
     // }
   });
 
+  const { mutate: repost } = api.post.repost.useMutation({
+    onSettled: () => {
+      void utils.post.invalidate();
+    },
+  });
+
   const hasLiked = post.userLikes.length > 0;
 
   if (!isLoaded) return null;
@@ -143,8 +152,8 @@ export const PostView = (props: PostWithUser) => {
             </Link>
           </div>
           <span className="break-words text-2xl">{post.content}</span>
-          <div className="flex pt-2">
-            <SignedIn>
+          <div className="flex gap-4 pt-2">
+            <AuthButton>
               <div
                 className="flex cursor-pointer"
                 onClick={() => {
@@ -158,35 +167,51 @@ export const PostView = (props: PostWithUser) => {
                 <HeartIcon
                   width={24}
                   height={24}
-                  color={hasLiked ? "red" : "white"}
+                  className={hasLiked ? "text-red-600" : "text-white"}
                 />
                 <span>{post._count.userLikes}</span>
               </div>
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <div
-                  className="flex cursor-pointer"
-                  onClick={() => {
-                    if (hasLiked) {
-                      unlike({ postId: post.id });
-                    } else {
-                      like({ postId: post.id });
-                    }
-                  }}
-                >
-                  <HeartIcon
-                    width={24}
-                    height={24}
-                    color={hasLiked ? "red" : "white"}
-                  />
-                  <span>{post._count.userLikes}</span>
-                </div>
-              </SignInButton>
-            </SignedOut>
+            </AuthButton>
+            <AuthButton>
+              <div
+                className="flex cursor-pointer"
+                onClick={() =>
+                  repost({
+                    content: post.content,
+                    repostAuthorId: author.id,
+                  })
+                }
+              >
+                <ArrowPathRoundedSquareIcon width={24} height={24} />
+              </div>
+            </AuthButton>
+            <div
+              className="flex cursor-pointer"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `https://${process.env.VERCEL_URL ?? "localhost:3000"}/post/${
+                    post.id
+                  }`
+                );
+                toast.success("Copied post URL to clipboard");
+              }}
+            >
+              <ShareIcon width={24} height={24} />
+            </div>
           </div>
         </div>
       </div>
     </div>
+  );
+};
+
+const AuthButton = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      <SignedIn>{children}</SignedIn>
+      <SignedOut>
+        <SignInButton mode="modal">{children}</SignInButton>
+      </SignedOut>
+    </>
   );
 };
