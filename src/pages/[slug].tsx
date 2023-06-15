@@ -39,11 +39,10 @@ const ProfileFeed = ({ userId }: { userId: string }) => {
   if (isLoading) return <LoadingPage />;
   if (error) return <div>{error.message}</div>;
   if (!data || data.length === 0) return <div>User has no posts yet.</div>;
-
   return (
     <div>
-      {data.map(({ post, author }) => (
-        <PostView post={post} author={author} key={post.id} />
+      {data.map((props) => (
+        <PostView {...props} key={props.post.id} />
       ))}
     </div>
   );
@@ -59,8 +58,8 @@ const LikesFeed = ({ username }: { username: string }) => {
 
   return (
     <div>
-      {data.map(({ post, author }) => (
-        <PostView post={post} author={author} key={post.id} />
+      {data.map((props) => (
+        <PostView {...props} key={props.post.id} />
       ))}
     </div>
   );
@@ -101,7 +100,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <div className="p-4 text-2xl font-bold">{`@${username}`}</div>
         <Tabs defaultValue="posts">
           <TabsList className="mb-2 w-full">
-            <TabsTrigger value="posts">Posts</TabsTrigger>
+            <TabsTrigger value="posts">Posts & Reposts</TabsTrigger>
             <TabsTrigger value="likes">Likes</TabsTrigger>
           </TabsList>
           <div className="w-full border-b border-slate-400" />

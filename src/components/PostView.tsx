@@ -4,14 +4,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { api, type RouterOutputs } from "~/utils/api";
 import { HeartIcon } from "@heroicons/react/24/outline";
-import { useUser, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
+import { type User } from "@clerk/nextjs/api";
+import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/outline";
+import { SlimUser } from "~/utils/types";
 
 dayjs.extend(relativeTime);
-type PostWithUser = RouterOutputs["post"]["getAll"][number];
+type PostWithUser = RouterOutputs["post"]["getAll2"][number];
 export const PostView = (props: PostWithUser) => {
   const { isLoaded } = useUser();
-  const { post, author } = props;
+  const { post, author, repostAuthor } = props;
   const utils = api.useContext();
+
+  let mainAuthor: SlimUser;
+  let reposter: SlimUser | undefined;
+  if (repostAuthor === undefined) {
+    mainAuthor = author;
+    reposter = undefined;
+  } else {
+    mainAuthor = repostAuthor;
+    reposter = author;
+  }
 
   const { mutate: like } = api.post.like.useMutation({
     // onMutate: ({ postId }) => {
@@ -86,51 +99,52 @@ export const PostView = (props: PostWithUser) => {
   if (!isLoaded) return null;
 
   return (
-    <div className="flex gap-1 border-b border-slate-400 p-4" key={post.id}>
-      <Link href={`/@${author.username}`} className="shrink-0">
-        <Image
-          width={36}
-          height={36}
-          src={author.profileImageUrl}
-          alt="pfp"
-          className="h-9 w-9 rounded-full"
-        />
-      </Link>
-      <div className="flex w-full flex-col overflow-auto">
-        <div className="flex text-slate-300">
-          <Link className="hover:underline" href={`/@${author.username}`}>
-            <span className="font-bold">{`@${author.username}`}</span>
-          </Link>
-          <span className="px-1">·</span>
-          <Link href={`/post/${post.id}`}>
-            <span className="text-slate-400">
-              {dayjs(post.createdAt).fromNow()}
-            </span>
-          </Link>
+    <div
+      className="flex flex-col gap-1 border-b border-slate-400 p-4"
+      key={post.id}
+    >
+      {reposter && (
+        <div className="flex items-center gap-1">
+          {/* Icon needs to be 36px wide so margin left is 36 - 20 = 16px = 1rem */}
+          <ArrowPathRoundedSquareIcon
+            strokeWidth={2.5}
+            height={20}
+            width={20}
+            className="ml-4 text-slate-600"
+          />
+          <div className="text-sm font-bold text-slate-600">
+            <Link className="hover:underline" href={`/@${author.username}`}>
+              @{author.username}
+            </Link>{" "}
+            Reposted
+          </div>
         </div>
-        <span className="text-2xl break-words">{post.content}</span>
-        <div className="flex pt-2">
-          <SignedIn>
-            <div
-              className="flex cursor-pointer"
-              onClick={() => {
-                if (hasLiked) {
-                  unlike({ postId: post.id });
-                } else {
-                  like({ postId: post.id });
-                }
-              }}
-            >
-              <HeartIcon
-                width={24}
-                height={24}
-                color={hasLiked ? "red" : "white"}
-              />
-              <span>{post._count.userLikes}</span>
-            </div>
-          </SignedIn>
-          <SignedOut>
-            <SignInButton mode="modal">
+      )}
+      <div className="flex gap-1">
+        <Link href={`/@${mainAuthor.username}`} className="shrink-0">
+          <Image
+            width={36}
+            height={36}
+            src={mainAuthor.profileImageUrl}
+            alt="pfp"
+            className="h-9 w-9 rounded-full"
+          />
+        </Link>
+        <div className="flex w-full flex-col overflow-auto">
+          <div className="flex text-slate-300">
+            <Link className="hover:underline" href={`/@${mainAuthor.username}`}>
+              <span className="font-bold">{`@${mainAuthor.username}`}</span>
+            </Link>
+            <span className="px-1">·</span>
+            <Link href={`/post/${post.id}`}>
+              <span className="text-slate-400">
+                {dayjs(post.createdAt).fromNow()}
+              </span>
+            </Link>
+          </div>
+          <span className="break-words text-2xl">{post.content}</span>
+          <div className="flex pt-2">
+            <SignedIn>
               <div
                 className="flex cursor-pointer"
                 onClick={() => {
@@ -148,32 +162,29 @@ export const PostView = (props: PostWithUser) => {
                 />
                 <span>{post._count.userLikes}</span>
               </div>
-            </SignInButton>
-          </SignedOut>
-          {/* {!isSignedIn && (
-            <Dialog>
-              <DialogTrigger className="flex">
-                <HeartIcon
-                  width={24}
-                  height={24}
-                  color={hasLiked ? "red" : "white"}
-                />
-                <span>{post._count.userLikes}</span>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Please Log In</DialogTitle>
-                  <DialogDescription className="flex items-center justify-between">
-                    You must be logged in to like posts.
-                    <Button variant="default" onClick={() => {}}>
-                      Sign In
-                    </Button>
-                    <SignInButton />
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          )} */}
+            </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <div
+                  className="flex cursor-pointer"
+                  onClick={() => {
+                    if (hasLiked) {
+                      unlike({ postId: post.id });
+                    } else {
+                      like({ postId: post.id });
+                    }
+                  }}
+                >
+                  <HeartIcon
+                    width={24}
+                    height={24}
+                    color={hasLiked ? "red" : "white"}
+                  />
+                  <span>{post._count.userLikes}</span>
+                </div>
+              </SignInButton>
+            </SignedOut>
+          </div>
         </div>
       </div>
     </div>
