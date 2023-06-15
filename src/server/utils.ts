@@ -1,4 +1,4 @@
-import type { User } from "@clerk/nextjs/dist/api";
+import {type User} from "@clerk/nextjs/api"
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
