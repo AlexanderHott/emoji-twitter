@@ -11,21 +11,22 @@ import {
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { type SlimUser } from "~/utils/types";
 import { toast } from "react-hot-toast";
+import { getBaseUrl } from "~/utils/api";
 
 dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["post"]["getAll"][number];
 export const PostView = (props: PostWithUser) => {
   const { isLoaded } = useUser();
-  const { post, author, repostAuthor } = props;
+  const { post, author, originalAuthor } = props;
   const utils = api.useContext();
 
   let mainAuthor: SlimUser;
   let reposter: SlimUser | undefined;
-  if (repostAuthor === undefined) {
+  if (originalAuthor === undefined) {
     mainAuthor = author;
     reposter = undefined;
   } else {
-    mainAuthor = repostAuthor;
+    mainAuthor = originalAuthor;
     reposter = author;
   }
 
@@ -129,6 +130,13 @@ export const PostView = (props: PostWithUser) => {
               @{author.username}
             </Link>{" "}
             Reposted
+            <span className="px-1">·</span>
+            <Link
+              href={`/post/${post.originalPostId || ""}`}
+              className="hover:underline"
+            >
+              Original
+            </Link>
           </div>
         </div>
       )}
@@ -148,9 +156,9 @@ export const PostView = (props: PostWithUser) => {
               className="hover:underline"
               href={`/@${mainAuthor.username || ""}`}
             >
-              <span className="font-bold">{`@${
-                mainAuthor.username || ""
-              }`}</span>
+              <span className="font-bold">
+                {`@${mainAuthor.username || ""}`}
+              </span>
             </Link>
             <span className="px-1">·</span>
             <Link href={`/post/${post.id}`}>
@@ -186,7 +194,8 @@ export const PostView = (props: PostWithUser) => {
                 onClick={() =>
                   repost({
                     content: post.content,
-                    repostAuthorId: author.id,
+                    originalAuthorId: post.originalAuthorId ?? author.id,
+                    originalPostId: post.originalPostId ?? post.id,
                   })
                 }
               >
@@ -197,9 +206,11 @@ export const PostView = (props: PostWithUser) => {
               className="flex cursor-pointer"
               onClick={() => {
                 void navigator.clipboard.writeText(
-                  `https://${process.env.VERCEL_URL ?? "localhost:3000"}/post/${
-                    post.id
-                  }`
+                  `${
+                    process.env.VERCEL_URL
+                      ? "https://" + process.env.VERCEL_URL
+                      : "http://localhost:" + (process.env.PORT || 3000)
+                  }/post/${post.id}`
                 );
                 toast.success("Copied post URL to clipboard");
               }}

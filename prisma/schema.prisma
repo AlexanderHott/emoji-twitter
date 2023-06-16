@@ -19,7 +19,8 @@ model Post {
   authorId String
   likes    Int     @default(0)
 
-  repostAuthorId String? 
+  originalAuthorId String? 
+  originalPostId String?
 
   userLikes UserLikes[]
 

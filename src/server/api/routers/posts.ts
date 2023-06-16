@@ -29,7 +29,7 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
   const idToUser = new Map<string, User>();
   const userIds = posts
     .map((p) => p.authorId)
-    .concat(posts.map((p) => p.repostAuthorId).filter(Boolean) as string[]);
+    .concat(posts.map((p) => p.originalAuthorId).filter(Boolean) as string[]);
   const users = await clerkClient.users.getUserList({
     userId: [...new Set(userIds)],
   });
@@ -38,8 +38,8 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
   }
   return posts.map((post) => {
     const author = idToUser.get(post.authorId) as User;
-    const repostAuthor = post.repostAuthorId
-      ? idToUser.get(post.repostAuthorId)
+    const originalAuthor = post.originalAuthorId
+      ? idToUser.get(post.originalAuthorId)
       : undefined;
     return {
       post,
@@ -48,11 +48,11 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
         username: author.username,
         profileImageUrl: author.profileImageUrl,
       },
-      repostAuthor: repostAuthor
+      originalAuthor: originalAuthor
         ? {
-            id: repostAuthor.id,
-            username: repostAuthor.username,
-            profileImageUrl: repostAuthor.profileImageUrl,
+            id: originalAuthor.id,
+            username: originalAuthor.username,
+            profileImageUrl: originalAuthor.profileImageUrl,
           }
         : undefined,
     };
@@ -61,11 +61,11 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
 
 const addUserDataToPost = async (post: PostWithLike) => {
   const author = await clerkClient.users.getUser(post.authorId);
-  const repostAuthor =
-    post.authorId === post.repostAuthorId
+  const originalAuthor =
+    post.authorId === post.originalAuthorId
       ? author
-      : post.repostAuthorId !== null
-      ? await clerkClient.users.getUser(post.repostAuthorId)
+      : post.originalAuthorId !== null
+      ? await clerkClient.users.getUser(post.originalAuthorId)
       : undefined;
 
   return {
@@ -75,11 +75,11 @@ const addUserDataToPost = async (post: PostWithLike) => {
       username: author.username,
       profileImageUrl: author.profileImageUrl,
     },
-    repostAuthor: repostAuthor
+    originalAuthor: originalAuthor
       ? {
-          id: repostAuthor.id,
-          username: repostAuthor.username,
-          profileImageUrl: repostAuthor.profileImageUrl,
+          id: originalAuthor.id,
+          username: originalAuthor.username,
+          profileImageUrl: originalAuthor.profileImageUrl,
         }
       : undefined,
   };
@@ -122,9 +122,15 @@ export const postsRouter = createTRPCRouter({
       return post;
     }),
   repost: protectedProcedure
-    .input(z.object({ content: z.string(), repostAuthorId: z.string() }))
+    .input(
+      z.object({
+        content: z.string(),
+        originalAuthorId: z.string(),
+        originalPostId: z.string(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      const { content, repostAuthorId } = input;
+      const { content, originalAuthorId, originalPostId } = input;
 
       const { success } = await ratelimit.limit(ctx.userId);
       if (!success) {
@@ -138,7 +144,8 @@ export const postsRouter = createTRPCRouter({
         data: {
           content,
           authorId: ctx.userId,
-          repostAuthorId,
+          originalAuthorId,
+          originalPostId,
         },
       });
     }),
