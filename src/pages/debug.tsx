@@ -31,26 +31,12 @@ const DebugPage = () => {
     "NEXT_PUBLIC_VERCEL_GIT_COMMIT_AUTHOR_NAME",
     "NEXT_PUBLIC_VERCEL_GIT_PULL_REQUEST_ID",
   ];
+    console.group("Vars")
+  console.table(vars.map(v => [v, process.env[v]]))
+  console.groupEnd()
   return (
     <div className="flex justify-center">
-      <table className="border border-slate-600">
-        <tr>
-          <th>Var</th>
-          <th>Val</th>
-        </tr>
-        {vars.map((v) => {
-          return (
-            <tr>
-              <td className="border border-slate-600 p-1">
-                <pre>{v}</pre>
-              </td>
-              <td className="border border-slate-600 p-1">
-                <pre>{process.env[v]}</pre>
-              </td>
-            </tr>
-          );
-        })}
-      </table>
+      debug
     </div>
   );
 };
