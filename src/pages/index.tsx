@@ -30,12 +30,14 @@ const CreatePostWizard = () => {
               likes: 0,
               userLikes: [],
               _count: { userLikes: 0 },
+              repostAuthorId: null,
             },
             author: {
               id: user.id,
               username: user.username,
               profileImageUrl: user.profileImageUrl,
             },
+            repostAuthor: undefined,
           },
           ...old,
         ];
@@ -97,6 +99,11 @@ const CreatePostWizard = () => {
 };
 
 const Feed = () => {
+  // const {
+  //   data: posts,
+  //   isLoading: postIsLoading,
+  //   error: postError,
+  // } = api.post.getAll.useQuery();
   const {
     data: posts,
     isLoading: postIsLoading,
@@ -115,8 +122,8 @@ const Feed = () => {
 
   return (
     <div className="flex flex-col">
-      {posts?.map(({ post, author }) => (
-        <PostView key={post.id} post={post} author={author} />
+      {posts?.map((props) => (
+        <PostView key={props.post.id} {...props} />
       ))}
     </div>
   );

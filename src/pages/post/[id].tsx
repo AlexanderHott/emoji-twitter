@@ -31,22 +31,22 @@ import { api } from "~/utils/api";
 
 // const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
 const SinglePostPage: NextPage = () => {
-    const router = useRouter();
-    const { id } = router.query as { id: string };
-    const { data, isLoading } = api.post.getById.useQuery({ id });
-    if (isLoading || !data) return <LoadingPage />
-    // if (!data) return <div>404</div>;
+  const router = useRouter();
+  const { id } = router.query as { id: string };
+  const { data: post, isLoading } = api.post.getById.useQuery({ id });
+  if (isLoading || !post) return <LoadingPage />;
+  // if (!data) return <div>404</div>;
 
-    return (
-        <>
-            <Head>
-                <title>{`${data.post.content} - @${data.author.username}`}</title>
-            </Head>
-            <PageLayout>
-                <PostView post={data.post} author={data.author} />
-            </PageLayout>
-        </>
-    );
+  return (
+    <>
+      <Head>
+        <title>{`${post.post.content} - @${post.author.username || ""}`}</title>
+      </Head>
+      <PageLayout>
+        <PostView {...post} />
+      </PageLayout>
+    </>
+  );
 };
 
 export default SinglePostPage;
