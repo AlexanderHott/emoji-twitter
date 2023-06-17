@@ -11,24 +11,11 @@ import {
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { type SlimUser } from "~/utils/types";
 import { toast } from "react-hot-toast";
-import type {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-} from "next";
 
 dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["post"]["getAll"][number];
 
-export const getServerSideProps: GetServerSideProps<{ host?: string }> = async (
-  context
-) => {
-  console.log("ctx", context)
-  return { props: { host: context.req.headers.host } };
-};
-
-export const PostView = (
-  props: PostWithUser & InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
+export const PostView = (props: PostWithUser) => {
   const { isLoaded } = useUser();
   const { post, author, originalAuthor } = props;
   const utils = api.useContext();
