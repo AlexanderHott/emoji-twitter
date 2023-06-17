@@ -171,7 +171,7 @@ export const PostView = (props: PostWithUser) => {
           <div className="flex gap-4 pt-2">
             <AuthButton>
               <div
-                className="flex cursor-pointer"
+                className="flex cursor-pointer gap-1 group group-hover:text-red-600"
                 onClick={() => {
                   if (hasLiked) {
                     unlike({ postId: post.id });
@@ -183,14 +183,14 @@ export const PostView = (props: PostWithUser) => {
                 <HeartIcon
                   width={24}
                   height={24}
-                  className={hasLiked ? "text-red-600" : "text-white"}
+                  className={hasLiked ? " text-red-600" : " text-white group-hover:text-red-600"}
                 />
-                <span>{post._count.userLikes}</span>
+                <span className="group-hover:text-red-600">{post._count.userLikes}</span>
               </div>
             </AuthButton>
             <AuthButton>
               <div
-                className="flex cursor-pointer"
+                className="flex cursor-pointer gap-1 hover:text-lime-600"
                 onClick={() =>
                   repost({
                     content: post.content,
@@ -199,7 +199,12 @@ export const PostView = (props: PostWithUser) => {
                   })
                 }
               >
-                <ArrowPathRoundedSquareIcon width={24} height={24} />
+                <ArrowPathRoundedSquareIcon
+                  width={24}
+                  height={24}
+                  className=""
+                />
+                <span>{post.repostCount}</span>
               </div>
             </AuthButton>
             <div
@@ -211,7 +216,11 @@ export const PostView = (props: PostWithUser) => {
                 toast.success("Copied post URL to clipboard");
               }}
             >
-              <ShareIcon width={24} height={24} />
+              <ShareIcon
+                width={24}
+                height={24}
+                className="hover:text-cyan-600"
+              />
             </div>
           </div>
         </div>
