@@ -31,6 +31,8 @@ const CreatePostWizard = () => {
               userLikes: [],
               _count: { userLikes: 0 },
               originalAuthorId: null,
+              originalPostId: null,
+              repostCount: 0,
             },
             author: {
               id: user.id,
@@ -122,9 +124,7 @@ const Feed = () => {
 
   return (
     <div className="flex flex-col">
-      {posts?.map((props) => (
-        <PostView key={props.post.id} {...props} />
-      ))}
+      {posts?.map((props) => <PostView key={props.post.id} {...props} />)}
     </div>
   );
 };
