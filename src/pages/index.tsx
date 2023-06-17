@@ -124,7 +124,9 @@ const Feed = () => {
 
   return (
     <div className="flex flex-col">
-      {posts?.map((props) => <PostView key={props.post.id} {...props} />)}
+      {posts?.map((props) => (
+        <PostView key={props.post.id} {...props} />
+      ))}
     </div>
   );
 };

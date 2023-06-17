@@ -171,7 +171,7 @@ export const PostView = (props: PostWithUser) => {
           <div className="flex gap-4 pt-2">
             <AuthButton>
               <div
-                className="flex cursor-pointer gap-1 group group-hover:text-red-600"
+                className="group flex cursor-pointer gap-1 group-hover:text-red-600"
                 onClick={() => {
                   if (hasLiked) {
                     unlike({ postId: post.id });
@@ -183,9 +183,15 @@ export const PostView = (props: PostWithUser) => {
                 <HeartIcon
                   width={24}
                   height={24}
-                  className={hasLiked ? " text-red-600" : " text-white group-hover:text-red-600"}
+                  className={
+                    hasLiked
+                      ? " text-red-600"
+                      : " text-white group-hover:text-red-600"
+                  }
                 />
-                <span className="group-hover:text-red-600">{post._count.userLikes}</span>
+                <span className="group-hover:text-red-600">
+                  {post._count.userLikes}
+                </span>
               </div>
             </AuthButton>
             <AuthButton>
