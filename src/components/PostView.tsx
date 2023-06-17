@@ -219,7 +219,7 @@ export const PostView = (
               className="flex cursor-pointer"
               onClick={() => {
                 void navigator.clipboard.writeText(
-                  `${props.host}/post/${post.id}`
+                  `https://${window.location.host}/post/${post.id}`
                 );
                 toast.success("Copied post URL to clipboard");
               }}
