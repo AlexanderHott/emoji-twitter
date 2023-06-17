@@ -11,11 +11,24 @@ import {
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { type SlimUser } from "~/utils/types";
 import { toast } from "react-hot-toast";
-import { getBaseUrl } from "~/utils/api";
+import type {
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+} from "next";
 
 dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["post"]["getAll"][number];
-export const PostView = (props: PostWithUser) => {
+
+export const getServerSideProps: GetServerSideProps<{ host?: string }> = async (
+  context
+) => {
+  console.log("ctx", context)
+  return { props: { host: context.req.headers.host } };
+};
+
+export const PostView = (
+  props: PostWithUser & InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
   const { isLoaded } = useUser();
   const { post, author, originalAuthor } = props;
   const utils = api.useContext();
@@ -206,11 +219,7 @@ export const PostView = (props: PostWithUser) => {
               className="flex cursor-pointer"
               onClick={() => {
                 void navigator.clipboard.writeText(
-                  `${
-                    process.env.VERCEL_URL
-                      ? "https://" + process.env.VERCEL_URL
-                      : "http://localhost:" + (process.env.PORT || 3000)
-                  }/post/${post.id}`
+                  `${props.host}/post/${post.id}`
                 );
                 toast.success("Copied post URL to clipboard");
               }}
