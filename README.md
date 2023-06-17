@@ -18,3 +18,8 @@
 ### Fixes
 
 - [ ] instant likes
+- [ ] open graph images
+
+## Resources
+
+- Issue templates adapted from <https://github.com/stevemao/github-issue-templates>
