@@ -19,7 +19,5 @@ body:
       label: "Screenshots"
       description: If applicable, add screenshots to help explain your feature.
       placeholder: Paste image from clipboard here to automatically upload
-      value: |
-        ![DESCRIPTION](LINK.png)
     validations:
       required: false
