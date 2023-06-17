@@ -31,6 +31,8 @@ const CreatePostWizard = () => {
               userLikes: [],
               _count: { userLikes: 0 },
               originalAuthorId: null,
+              originalPostId: null,
+              repostCount: 0,
             },
             author: {
               id: user.id,
