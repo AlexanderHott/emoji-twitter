@@ -140,14 +140,21 @@ export const postsRouter = createTRPCRouter({
         });
       }
 
-      return await ctx.prisma.post.create({
-        data: {
-          content,
-          authorId: ctx.userId,
-          originalAuthorId,
-          originalPostId,
-        },
-      });
+      await Promise.all([
+        await ctx.prisma.post.update({
+          where: { id: originalPostId },
+          data: { repostCount: { increment: 1 } },
+        }),
+
+        await ctx.prisma.post.create({
+          data: {
+            content,
+            authorId: ctx.userId,
+            originalAuthorId,
+            originalPostId,
+          },
+        }),
+      ]);
     }),
   getByUserId: publicProcedure
     .input(z.object({ userId: z.string() }))
