@@ -2,23 +2,8 @@
 
 ## Roadmap
 
-### Features
-
-- [x] like
-- [x] share
-- [x] repost
-
-- [ ] reply
-- [ ] profile banner
-- [ ] bite (no un-bite)
-- [ ] custom emojis
-- [ ] sound (<https://thirtydollar.website>)
-- [ ] better UI
-
-### Fixes
-
-- [ ] instant likes
-- [ ] open graph images
+- Progress and roadmap tracked on [github projects](https://github.com/users/AlexanderHOtt/projects/1)
+- [Milestones](https://github.com/AlexanderHOtt/emoji-twitter/milestones)
 
 ## Resources
 
