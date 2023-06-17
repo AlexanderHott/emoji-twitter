@@ -4,13 +4,15 @@
 
 ### Features
 
-- [ ] reposts
+- [x] like
+- [x] share
+- [x] repost
 
 - [ ] reply
 - [ ] profile banner
 - [ ] bite (no un-bite)
 - [ ] custom emojis
-- [ ] sound
+- [ ] sound (<https://thirtydollar.website>)
 - [ ] better UI
 
 ### Fixes
