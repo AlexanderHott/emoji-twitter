@@ -1,9 +1,7 @@
 name: "Bug Report"
 description: Create a ticket for a bug.
 title: "Bug: <title>"
-labels: [
-  "bug"
-]
+labels: ["bug"]
 body:
   - type: textarea
     id: description
@@ -38,7 +36,9 @@ body:
     id: logs
     attributes:
       label: "Logs"
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      description:
+        Please copy and paste any relevant log output. This will be
+        automatically formatted into code, so no need for backticks.
       render: bash
     validations:
       required: false
