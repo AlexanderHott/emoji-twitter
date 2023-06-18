@@ -18,14 +18,16 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-export type PostWithLike = Post & {
+export type PostWithLikeAndBite = Post & {
   userLikes: { userId: string }[];
+  userBites: { userId: string }[];
   _count: {
     userLikes: number;
+    userBites: number;
   };
 };
 
-const addUserDataToPosts = async (posts: PostWithLike[]) => {
+const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
   const idToUser = new Map<string, User>();
   const userIds = posts
     .map((p) => p.authorId)
@@ -59,7 +61,7 @@ const addUserDataToPosts = async (posts: PostWithLike[]) => {
   });
 };
 
-const addUserDataToPost = async (post: PostWithLike) => {
+const addUserDataToPost = async (post: PostWithLikeAndBite) => {
   const author = await clerkClient.users.getUser(post.authorId);
   const originalAuthor =
     post.authorId === post.originalAuthorId
@@ -96,7 +98,11 @@ export const postsRouter = createTRPCRouter({
           where: { userId: ctx.userId || undefined },
           select: { userId: true },
         },
-        _count: { select: { userLikes: true } },
+        userBites: {
+          where: { userId: ctx.userId || undefined },
+          select: { userId: true },
+        },
+        _count: { select: { userLikes: true, userBites: true } },
       },
     });
     return await addUserDataToPosts(posts);
@@ -164,8 +170,15 @@ export const postsRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
         take: 100,
         include: {
-          userLikes: true,
-          _count: { select: { userLikes: true } },
+          userLikes: {
+            where: { userId: ctx.userId || undefined },
+            select: { userId: true },
+          },
+          userBites: {
+            where: { userId: ctx.userId || undefined },
+            select: { userId: true },
+          },
+          _count: { select: { userLikes: true, userBites: true } },
         },
       });
 
@@ -181,7 +194,11 @@ export const postsRouter = createTRPCRouter({
             where: { userId: ctx.userId || undefined },
             select: { userId: true },
           },
-          _count: { select: { userLikes: true } },
+          userBites: {
+            where: { userId: ctx.userId || undefined },
+            select: { userId: true },
+          },
+          _count: { select: { userLikes: true, userBites: true } },
         },
       });
       if (!post) {
@@ -286,11 +303,85 @@ export const postsRouter = createTRPCRouter({
         include: {
           post: {
             include: {
+              userBites: {
+                where: { userId: ctx.userId || undefined },
+                select: { userId: true },
+              },
               userLikes: {
                 where: { userId: ctx.userId || undefined },
                 select: { userId: true },
               },
-              _count: { select: { userLikes: true } },
+              _count: { select: { userLikes: true, userBites: true } },
+            },
+          },
+        },
+      });
+      return await addUserDataToPosts(posts.map((p) => p.post));
+    }),
+  bite: protectedProcedure
+    .input(z.object({ postId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { postId } = input;
+      const userId = ctx.userId;
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: postId },
+      });
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+      const bite = await ctx.prisma.userBites.findUnique({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      });
+      if (bite) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Bite already exists",
+        });
+      }
+      await ctx.prisma.userBites.create({
+        data: {
+          postId,
+          userId,
+        },
+      });
+      // return addUserDataToPost(post);
+    }),
+  getBittenPosts: publicProcedure
+    .input(z.object({ username: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const [user] = await clerkClient.users.getUserList({
+        username: [input.username],
+        limit: 1,
+      });
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+      const posts = await ctx.prisma.userBites.findMany({
+        where: { userId: user.id },
+        orderBy: { createdAt: "desc" },
+        include: {
+          post: {
+            include: {
+              userBites: {
+                where: { userId: ctx.userId || undefined },
+                select: { userId: true },
+              },
+              userLikes: {
+                where: { userId: ctx.userId || undefined },
+                select: { userId: true },
+              },
+              _count: { select: { userLikes: true, userBites: true } },
             },
           },
         },

@@ -98,6 +98,12 @@ export const PostView = (props: PostWithUser) => {
     // }
   });
 
+  const { mutate: bite } = api.post.bite.useMutation({
+    onSettled: () => {
+      void utils.post.invalidate();
+    },
+  });
+
   const { mutate: repost } = api.post.repost.useMutation({
     onSettled: () => {
       void utils.post.invalidate();
@@ -105,6 +111,7 @@ export const PostView = (props: PostWithUser) => {
   });
 
   const hasLiked = post.userLikes.length > 0;
+  const hasBit = post.userBites.length > 0;
 
   if (!isLoaded) return null;
 
@@ -191,6 +198,25 @@ export const PostView = (props: PostWithUser) => {
                 />
                 <span className="group-hover:text-red-600">
                   {post._count.userLikes}
+                </span>
+              </div>
+            </AuthButton>
+            <AuthButton>
+              <div
+                className="group flex cursor-pointer gap-1 group-hover:text-yellow-500"
+                onClick={() => {
+                  if (!hasBit) {
+                    bite({ postId: post.id });
+                  }
+                }}
+              >
+                {hasBit ? (
+                  <Image src="/bitten.png" alt="bite" height={28} width={28} />
+                ) : (
+                  <Image src="/bite.png" alt="bite" height={28} width={28} />
+                )}
+                <span className="group-hover:text-yellow-500">
+                  {post._count.userBites}
                 </span>
               </div>
             </AuthButton>
