@@ -15,21 +15,35 @@ model Post {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  content  String  @db.VarChar(255)
+  content  String @db.VarChar(255)
   authorId String
-  likes    Int     @default(0)
+  likes    Int    @default(0)
 
-  originalAuthorId String? 
-  originalPostId String?
+  originalAuthorId String?
+  originalPostId   String?
 
   repostCount Int @default(0)
 
   userLikes UserLikes[]
+  userBites UserBites[]
 
   @@index([authorId])
 }
 
 model UserLikes {
+  createdAt DateTime @default(now())
+
+  userId String
+  postId String
+
+  post Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+  @@unique([userId, postId])
+  @@index([postId])
+}
+
+model UserBites {
   createdAt DateTime @default(now())
 
   userId String
