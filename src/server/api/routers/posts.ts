@@ -297,4 +297,40 @@ export const postsRouter = createTRPCRouter({
       });
       return await addUserDataToPosts(posts.map((p) => p.post));
     }),
+  bite: protectedProcedure
+    .input(z.object({ postId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { postId } = input;
+      const userId = ctx.userId;
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: postId },
+      });
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+      const bite = await ctx.prisma.userBites.findUnique({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      });
+      if (bite) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Bite already exists",
+        });
+      }
+      await ctx.prisma.userBites.create({
+        data: {
+          postId,
+          userId,
+        },
+      });
+      // return addUserDataToPost(post);
+    }),
 });
