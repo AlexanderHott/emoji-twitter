@@ -16,7 +16,7 @@ dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["post"]["getAll"][number];
 
 export const PostView = (props: PostWithUser) => {
-  const { isLoaded } = useUser();
+  const { user, isLoaded } = useUser();
   const { post, author, originalAuthor } = props;
   const utils = api.useContext();
 
@@ -110,8 +110,8 @@ export const PostView = (props: PostWithUser) => {
     },
   });
 
-  const hasLiked = post.userLikes.length > 0;
-  const hasBit = post.userBites.length > 0;
+  const hasLiked = post.userLikes.filter((u) => u.userId === user?.id).length > 0;
+  const hasBit = post.userBites.filter((u) => u.userId === user?.id).length > 0;
 
   if (!isLoaded) return null;
 
