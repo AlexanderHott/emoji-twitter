@@ -6,7 +6,6 @@ import {
   SignedIn,
   SignedOut,
 } from "@clerk/nextjs";
-import Image from "next/image";
 
 export const NavBar = () => {
   return (
