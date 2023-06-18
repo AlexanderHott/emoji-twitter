@@ -65,6 +65,22 @@ const LikesFeed = ({ username }: { username: string }) => {
   );
 };
 
+const BitesFeed = ({ username }: { username: string }) => {
+  const { data, isLoading, error } = api.post.getBittenPosts.useQuery({
+    username,
+  });
+  if (isLoading) return <LoadingPage />;
+  if (error) return <div>{error.message}</div>;
+  if (!data) return <div>no likes</div>;
+
+  return (
+    <div>
+      {data.map((props) => (
+        <PostView {...props} key={props.post.id} />
+      ))}
+    </div>
+  );
+};
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data } = api.profile.getByUsername.useQuery({
     username,
@@ -102,6 +118,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           <TabsList className="mb-2 w-full">
             <TabsTrigger value="posts">Posts & Reposts</TabsTrigger>
             <TabsTrigger value="likes">Likes</TabsTrigger>
+            <TabsTrigger value="bites">Bites</TabsTrigger>
           </TabsList>
           <div className="w-full border-b border-slate-400" />
           <TabsContent value="posts">
@@ -109,6 +126,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           </TabsContent>
           <TabsContent value="likes">
             <LikesFeed username={username} />
+          </TabsContent>
+          <TabsContent value="bites">
+            <BitesFeed username={username} />
           </TabsContent>
         </Tabs>
       </PageLayout>
