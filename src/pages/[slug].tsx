@@ -1,9 +1,11 @@
+import { SignedIn, useUser } from "@clerk/nextjs";
 import { type GetStaticProps, type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { PageLayout } from "~/components/Layout";
 import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
+import { Button } from "~/components/ui/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/Tabs";
 import { generateSSGHelper } from "~/server/utils";
 import { api } from "~/utils/api";
@@ -82,16 +84,27 @@ const BitesFeed = ({ username }: { username: string }) => {
   );
 };
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-  const { data } = api.profile.getByUsername.useQuery({
+  const { user: loggedIn, isLoaded: authLoaded } = useUser();
+  const { data: user } = api.profile.getByUsername.useQuery({
     username,
   });
+  const { data: followStats, isLoading: isFollowStatsLoaded } =
+    api.user.followStats.useQuery({
+      userId: user?.id || "",
+    });
 
   const { data: emoji } = api.profile.getMostUsedEmojis.useQuery({
-    userId: data?.id,
+    userId: user?.id,
   });
+  const { mutate: follow } = api.user.follow.useMutation();
+  const { mutate: unfollow } = api.user.unfollow.useMutation();
 
-  if (!data) {
+  if (!user) {
     return <div>404</div>;
+  }
+
+  if (!authLoaded || isFollowStatsLoaded) {
+    return null;
   }
 
   return (
@@ -102,7 +115,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       <PageLayout>
         <div className="relative h-36 border-slate-400 bg-slate-600">
           <Image
-            src={data.profileImageUrl}
+            src={user.profileImageUrl}
             alt={`${username}'s profile picture`}
             width={128}
             height={128}
@@ -113,6 +126,26 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           </div>
         </div>
         <div className="mt-16" />
+        <div>
+          <pre>{JSON.stringify(followStats, null, 2)}</pre>
+        </div>
+        <SignedIn>
+          {followStats?.iFollow ? (
+            <Button
+              variant="outline"
+              onClick={() => unfollow({ leaderId: user.id })}
+            >
+              Unfollow
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              onClick={() => follow({ leaderId: user.id })}
+            >
+              Follow
+            </Button>
+          )}
+        </SignedIn>
         <div className="p-4 text-2xl font-bold">{`@${username}`}</div>
         <Tabs defaultValue="posts">
           <TabsList className="mb-2 w-full">
@@ -122,7 +155,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           </TabsList>
           <div className="w-full border-b border-slate-400" />
           <TabsContent value="posts">
-            <ProfileFeed userId={data.id} />
+            <ProfileFeed userId={user.id} />
           </TabsContent>
           <TabsContent value="likes">
             <LikesFeed username={username} />

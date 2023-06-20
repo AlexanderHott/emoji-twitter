@@ -59,6 +59,7 @@ model UserBites {
 model UserFollows {
   createdAt DateTime @default(now())
 
+  // The follower follows the leader
   leaderId   String
   followerId String
 

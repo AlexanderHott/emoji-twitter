@@ -107,6 +107,35 @@ export const postsRouter = createTRPCRouter({
     });
     return await addUserDataToPosts(posts);
   }),
+  getFollowingPosts: publicProcedure
+    .input(z.object({ followerId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const followingIds = await ctx.prisma.userFollows.findMany({
+        select: { leaderId: true },
+        where: { followerId: input.followerId },
+      });
+      const idArr = followingIds.map((f) => f.leaderId);
+      const posts = await ctx.prisma.post.findMany({
+        where: {
+          authorId: { in: idArr },
+        },
+        take: 100,
+        orderBy: { createdAt: "desc" },
+
+        include: {
+          userLikes: {
+            where: { userId: ctx.userId || undefined },
+            select: { userId: true },
+          },
+          userBites: {
+            where: { userId: ctx.userId || undefined },
+            select: { userId: true },
+          },
+          _count: { select: { userLikes: true, userBites: true } },
+        },
+      });
+      return addUserDataToPosts(posts);
+    }),
   create: protectedProcedure
     .input(postSchema)
     .mutation(async ({ ctx, input }) => {
