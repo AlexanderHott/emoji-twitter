@@ -74,7 +74,7 @@ export function MobileNav() {
           </SheetClose>
           <SignedIn>
             <SheetClose asChild>
-              <Link href={`/@${user?.username}`} className="flex gap-2">
+              <Link href={`/@${user?.username || ""}`} className="flex gap-2">
                 <UserIcon height={24} width={24} />
                 <span className="text-xl">Profile</span>
               </Link>

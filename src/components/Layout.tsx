@@ -19,7 +19,7 @@ export const PageLayout: React.FC<{ children: React.ReactNode }> = ({
           <span className="text-xl">Your Feed</span>
         </Link>
         <SignedIn>
-          <Link href={`/@${user?.username}`} className="flex gap-2">
+          <Link href={`/@${user?.username || ""}`} className="flex gap-2">
             <UserIcon height={24} width={24} />
             <span className="text-xl">Profile</span>
           </Link>
