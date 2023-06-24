@@ -4,8 +4,14 @@ import {
   SignedOut,
   SignInButton,
   SignOutButton,
+  useUser,
 } from "@clerk/nextjs";
-import { Bars3Icon, HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  HomeIcon,
+  SparklesIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 
 export const NavBar = () => {
   return (
@@ -44,6 +50,7 @@ import { Separator } from "./ui/Separator";
 import { GithubIcon } from "lucide-react";
 
 export function MobileNav() {
+  const { user } = useUser();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -59,13 +66,20 @@ export function MobileNav() {
               <span className="text-xl">Home</span>
             </Link>
           </SheetClose>
-
           <SheetClose asChild>
             <Link href="/feed" className="flex gap-2">
               <SparklesIcon height={24} width={24} />
               <span className="text-xl">Your Feed</span>
             </Link>
           </SheetClose>
+          <SignedIn>
+            <SheetClose asChild>
+              <Link href={`/@${user?.username}`} className="flex gap-2">
+                <UserIcon height={24} width={24} />
+                <span className="text-xl">Profile</span>
+              </Link>
+            </SheetClose>
+          </SignedIn>
         </div>
         <Separator className="bg-white my-4" />
         <SheetFooter>
