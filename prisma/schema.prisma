@@ -55,3 +55,16 @@ model UserBites {
   @@unique([userId, postId])
   @@index([postId])
 }
+
+model UserFollows {
+  createdAt DateTime @default(now())
+
+  // The follower follows the leader
+  leaderId   String
+  followerId String
+
+  @@id([leaderId, followerId])
+  @@unique([leaderId, followerId])
+  @@index([leaderId])
+  @@index([followerId])
+}

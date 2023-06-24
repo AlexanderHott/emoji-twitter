@@ -52,10 +52,10 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
       },
       originalAuthor: originalAuthor
         ? {
-            id: originalAuthor.id,
-            username: originalAuthor.username,
-            profileImageUrl: originalAuthor.profileImageUrl,
-          }
+          id: originalAuthor.id,
+          username: originalAuthor.username,
+          profileImageUrl: originalAuthor.profileImageUrl,
+        }
         : undefined,
     };
   });
@@ -63,12 +63,11 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
 
 const addUserDataToPost = async (post: PostWithLikeAndBite) => {
   const author = await clerkClient.users.getUser(post.authorId);
-  const originalAuthor =
-    post.authorId === post.originalAuthorId
-      ? author
-      : post.originalAuthorId !== null
-      ? await clerkClient.users.getUser(post.originalAuthorId)
-      : undefined;
+  const originalAuthor = post.authorId === post.originalAuthorId
+    ? author
+    : post.originalAuthorId !== null
+    ? await clerkClient.users.getUser(post.originalAuthorId)
+    : undefined;
 
   return {
     post,
@@ -79,10 +78,10 @@ const addUserDataToPost = async (post: PostWithLikeAndBite) => {
     },
     originalAuthor: originalAuthor
       ? {
-          id: originalAuthor.id,
-          username: originalAuthor.username,
-          profileImageUrl: originalAuthor.profileImageUrl,
-        }
+        id: originalAuthor.id,
+        username: originalAuthor.username,
+        profileImageUrl: originalAuthor.profileImageUrl,
+      }
       : undefined,
   };
 };
@@ -107,6 +106,36 @@ export const postsRouter = createTRPCRouter({
     });
     return await addUserDataToPosts(posts);
   }),
+  getFollowingPosts: publicProcedure
+    .input(z.object({ followerId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const followingIds = await ctx.prisma.userFollows.findMany({
+        select: { leaderId: true },
+        where: { followerId: input.followerId },
+      });
+      console.log("fids", followingIds);
+      const idArr = followingIds.map((f) => f.leaderId);
+      const posts = await ctx.prisma.post.findMany({
+        where: {
+          authorId: { in: idArr },
+        },
+        take: 100,
+        orderBy: { createdAt: "desc" },
+
+        include: {
+          userLikes: {
+            where: { userId: ctx.userId || undefined },
+            select: { userId: true },
+          },
+          userBites: {
+            where: { userId: ctx.userId || undefined },
+            select: { userId: true },
+          },
+          _count: { select: { userLikes: true, userBites: true } },
+        },
+      });
+      return addUserDataToPosts(posts);
+    }),
   create: protectedProcedure
     .input(postSchema)
     .mutation(async ({ ctx, input }) => {
@@ -133,7 +162,7 @@ export const postsRouter = createTRPCRouter({
         content: z.string(),
         originalAuthorId: z.string(),
         originalPostId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { content, originalAuthorId, originalPostId } = input;
