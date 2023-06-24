@@ -98,7 +98,11 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       await utils.user.invalidate();
     },
   });
-  const { mutate: unfollow } = api.user.unfollow.useMutation();
+  const { mutate: unfollow } = api.user.unfollow.useMutation({
+    onSettled: async () => {
+      await utils.user.invalidate();
+    },
+  });
 
   if (!user) {
     return <div>404</div>;
