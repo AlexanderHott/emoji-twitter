@@ -211,7 +211,7 @@ export const PostView = (props: PostWithUser) => {
                 }}
               >
                 {hasBit ? (
-                  <Image src="/bitten.png" alt="bite" height={28} width={28} />
+                  <Image src="/bitten.png" alt="bitten" height={28} width={28} className="w-auto" />
                 ) : (
                   <Image src="/bite.png" alt="bite" height={28} width={28} />
                 )}

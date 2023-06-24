@@ -10,7 +10,7 @@ import { Button } from "~/components/ui/Button";
 import { postSchema } from "~/schemas/post";
 import { api } from "~/utils/api";
 
-const CreatePostWizard = () => {
+export const CreatePostWizard = () => {
   const { user } = useUser();
   const utils = api.useContext();
   const { mutate, isLoading: isPosting } = api.post.create.useMutation({
@@ -102,11 +102,6 @@ const CreatePostWizard = () => {
 };
 
 const Feed = () => {
-  // const {
-  //   data: posts,
-  //   isLoading: postIsLoading,
-  //   error: postError,
-  // } = api.post.getAll.useQuery();
   const {
     data: posts,
     isLoading: postIsLoading,
@@ -125,9 +120,7 @@ const Feed = () => {
 
   return (
     <div className="flex flex-col">
-      {posts?.map((props) => (
-        <PostView key={props.post.id} {...props} />
-      ))}
+      {posts?.map((props) => <PostView key={props.post.id} {...props} />)}
     </div>
   );
 };
