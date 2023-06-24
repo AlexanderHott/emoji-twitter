@@ -94,8 +94,8 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   });
   const utils = api.useContext();
   const { mutate: follow } = api.user.follow.useMutation({
-    onSettled: () => {
-      utils.user.invalidate();
+    onSettled: async () => {
+      await utils.user.invalidate();
     },
   });
   const { mutate: unfollow } = api.user.unfollow.useMutation();
