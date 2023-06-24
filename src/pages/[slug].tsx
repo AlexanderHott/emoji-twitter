@@ -162,7 +162,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         </div>
         <div className="px-4 flex items-center gap-2">
           <span className="text-2xl font-bold ">{`@${username}`}</span>
-          {followStats?.followsMe ||
+          {followStats?.followsMe &&
             (
               <span className="text-sm text-slate-800 rounded-3xl bg-slate-100 py-0.5 px-1">
                 Follows you
