@@ -80,7 +80,7 @@ const BitesFeed = ({ username }: { username: string }) => {
   );
 };
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-  const { user: loggedIn, isLoaded: authLoaded } = useUser();
+  const { isLoaded: authLoaded } = useUser();
   const { data: user } = api.profile.getByUsername.useQuery({
     username,
   });
@@ -92,8 +92,10 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data: emoji } = api.profile.getMostUsedEmojis.useQuery({
     userId: user?.id,
   });
+  const utils = api.useContext();
   const { mutate: follow } = api.user.follow.useMutation({
     onSettled: () => {
+      utils.user.invalidate();
     },
   });
   const { mutate: unfollow } = api.user.unfollow.useMutation();
