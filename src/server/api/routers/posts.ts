@@ -34,12 +34,15 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
     .concat(posts.map((p) => p.originalAuthorId).filter(Boolean) as string[]);
   const users = await clerkClient.users.getUserList({
     userId: [...new Set(userIds)],
+    limit: 200
   });
+
   for (const user of users) {
     idToUser.set(user.id, user);
   }
   return posts.map((post) => {
     const author = idToUser.get(post.authorId) as User;
+    console.log("author", author?.id, post.authorId);
     const originalAuthor = post.originalAuthorId
       ? idToUser.get(post.originalAuthorId)
       : undefined;
