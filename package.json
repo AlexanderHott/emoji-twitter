@@ -24,7 +24,7 @@
     "@trpc/server": "^10.31.0",
     "@upstash/ratelimit": "^0.4.3",
     "@upstash/redis": "^1.21.0",
-    "@vercel/og": "^0.5.7",
+    "@vercel/og": "^0.5.11",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.8",
