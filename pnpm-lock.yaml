@@ -72,8 +72,8 @@ dependencies:
     specifier: ^2.4.1
     version: 2.4.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
   superjson:
-    specifier: 1.12.3
-    version: 1.12.3
+    specifier: 1.13.1
+    version: 1.13.1
   tailwind-merge:
     specifier: ^1.13.2
     version: 1.13.2
@@ -950,7 +950,7 @@ packages:
       '@tanstack/react-query': 4.29.14(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.12.3
+      superjson: 1.13.1
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: true
 
@@ -3811,8 +3811,8 @@ packages:
       pirates: 4.0.5
       ts-interface-checker: 0.1.13
 
-  /superjson@1.12.3:
-    resolution: {integrity: sha512-0j+U70KUtP8+roVPbwfqkyQI7lBt7ETnuA7KXbTDX3mCKiD/4fXs2ldKSMdt0MCfpTwiMxo20yFU3vu6ewETpQ==}
+  /superjson@1.13.1:
+    resolution: {integrity: sha512-AVH2eknm9DEd3qvxM4Sq+LTCkSXE2ssfh1t11MHMXyYXFQyQ1HLgVvV+guLTsaQnJU3gnaVo34TohHPulY/wLg==}
     engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.5
