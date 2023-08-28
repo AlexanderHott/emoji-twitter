@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "@planetscale/database": "^1.11.0",
     "@prisma/client": "^5.1.1",
     "@radix-ui/react-alert-dialog": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.4",
@@ -28,6 +29,7 @@
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.8",
+    "drizzle-orm": "^0.28.5",
     "lucide-react": "^0.263.1",
     "next": "^13.4.13",
     "react": "18.2.0",
@@ -43,7 +45,6 @@
     "@tanstack/react-query-devtools": "^4.29.14",
     "@types/eslint": "^8.40.2",
     "@types/node": "^20.4.9",
-    "@types/prettier": "^3.0.0",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.6",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
