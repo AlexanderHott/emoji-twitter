@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   datetime,
   int,
@@ -9,7 +9,9 @@ import {
 
 export const post = mysqlTable("Post", {
   id: text("id").primaryKey().notNull(),
-  createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
+  createdAt: datetime("createdAt", { fsp: 3 }).default(
+    sql`CURRENT_TIMESTAMP(3)`,
+  )
     .notNull(),
   content: varchar("content", { length: 255 }).notNull(),
   authorId: text("authorId").notNull(),
@@ -23,7 +25,7 @@ export const postRelations = relations(post, ({ many }) => (
 ));
 
 export const like = mysqlTable("UserLike", {
-  createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
+  createdAt: datetime("createdAt", { fsp: 3 }).default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
   userId: varchar("userId", { length: 191 }).notNull(),
   postId: varchar("postId", { length: 191 }).notNull(),
@@ -37,7 +39,7 @@ export const likeRelations = relations(like, ({ one }) => ({
 }));
 
 export const bite = mysqlTable("UserBite", {
-  createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
+  createdAt: datetime("createdAt", { fsp: 3 }).default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
   userId: varchar("userId", { length: 191 }).notNull(),
   postId: varchar("postId", { length: 191 }).notNull(),
@@ -51,7 +53,7 @@ export const biteRelations = relations(bite, ({ one }) => ({
 }));
 
 export const follow = mysqlTable("follow", {
-  createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
+  createdAt: datetime("createdAt", { fsp: 3 }).default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
   followingId: varchar("followingId", { length: 191 }).notNull(),
   followerId: varchar("followerId", { length: 191 }).notNull(),
