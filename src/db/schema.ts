@@ -8,14 +8,14 @@ import {
 } from "drizzle-orm/mysql-core";
 
 export const post = mysqlTable("Post", {
-  id: text("cuid").primaryKey().notNull(),
+  id: text("id").primaryKey().notNull(),
   createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
     .notNull(),
   content: varchar("content", { length: 255 }).notNull(),
-  authorId: text("cuid").notNull(),
-  likes: int("likes").default(0),
-  oritinalAuthorId: text("cuid"),
-  originalPostId: text("cuid"),
+  authorId: text("authorId").notNull(),
+  likes: int("likes").default(0).notNull(),
+  originalAuthorId: varchar("originalAuthorId", { length: 191 }),
+  originalPostId: varchar("originalPostId", { length: 191 }),
 });
 
 export const postRelations = relations(post, ({ many }) => (
@@ -25,8 +25,8 @@ export const postRelations = relations(post, ({ many }) => (
 export const like = mysqlTable("UserLike", {
   createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
     .notNull(),
-  userId: text("cuid").notNull(),
-  postId: text("cuid").notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  postId: varchar("postId", { length: 191 }).notNull(),
 });
 
 export const likeRelations = relations(like, ({ one }) => ({
@@ -39,8 +39,8 @@ export const likeRelations = relations(like, ({ one }) => ({
 export const bite = mysqlTable("UserBite", {
   createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
     .notNull(),
-  userId: text("cuid").notNull(),
-  postId: text("cuid").notNull(),
+  userId: varchar("userId", { length: 191 }).notNull(),
+  postId: varchar("postId", { length: 191 }).notNull(),
 });
 
 export const biteRelations = relations(bite, ({ one }) => ({
@@ -53,6 +53,6 @@ export const biteRelations = relations(bite, ({ one }) => ({
 export const follow = mysqlTable("follow", {
   createdAt: datetime("createdAt", { fsp: 3 }).$defaultFn(() => new Date())
     .notNull(),
-  followingId: text("cuid").notNull(),
-  followerId: text("cuid").notNull(),
+  followingId: varchar("followingId", { length: 191 }).notNull(),
+  followerId: varchar("followerId", { length: 191 }).notNull(),
 });
