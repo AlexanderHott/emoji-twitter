@@ -39,7 +39,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@clerk/nextjs": "^4.23.2",
+    "@clerk/nextjs": "^4.23.5",
     "@tanstack/react-query-devtools": "^4.29.14",
     "@types/eslint": "^8.40.2",
     "@types/node": "^20.4.9",
