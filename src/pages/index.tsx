@@ -17,7 +17,7 @@ export const CreatePostWizard = () => {
     onMutate: ({ content }) => {
       utils.post.getAll.setData(undefined, (old) => {
         if (!old) return old;
-        if (!user || !user.username || !user.profileImageUrl) return old;
+        if (!user || !user.username || !user.imageUrl) return old;
         if (!postSchema.safeParse({ content }).success) return old;
         setContent("");
         return [
@@ -38,7 +38,7 @@ export const CreatePostWizard = () => {
             author: {
               id: user.id,
               username: user.username,
-              profileImageUrl: user.profileImageUrl,
+              imageUrl: user.imageUrl,
             },
             originalAuthor: undefined,
           },
@@ -73,7 +73,7 @@ export const CreatePostWizard = () => {
       <Image
         width={56}
         height={56}
-        src={user.profileImageUrl}
+        src={user.imageUrl}
         alt="pfp"
         className="h-14 w-14 rounded-full"
       />

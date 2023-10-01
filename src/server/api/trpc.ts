@@ -46,7 +46,7 @@ import { prisma } from "~/server/db";
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
   const { req } = opts;
   const userId = getAuth(req).userId;
-  return { prisma, userId };
+  return { prisma, userId,db };
 };
 
 /**
@@ -60,6 +60,7 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { getAuth } from "@clerk/nextjs/server";
+import { db } from "~/db";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

@@ -13,7 +13,8 @@ const DebugPage = ({
   vercel_url,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   console.log("public vercel url", process.env.NEXT_PUBLIC_VERCEL_URL);
-  const { isLoading, data: posts, isError, error } = api.exp.test.useQuery();
+  // const { isLoading, data: posts, isError, error } = api.exp.test.useQuery();
+  const {isLoading, data: posts, error, isError} = api.post.dzGetAll.useQuery();
   if (isLoading) return null;
   if (isError) return <div>{JSON.stringify(error)}</div>;
   return (

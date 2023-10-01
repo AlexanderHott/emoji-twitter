@@ -152,7 +152,7 @@ export const PostView = (props: PostWithUser) => {
           <Image
             width={36}
             height={36}
-            src={mainAuthor.profileImageUrl}
+            src={mainAuthor.imageUrl}
             alt="pfp"
             className="h-9 w-9 rounded-full"
           />
