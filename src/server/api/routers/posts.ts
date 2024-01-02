@@ -11,6 +11,7 @@ import { Redis } from "@upstash/redis";
 import { type Post } from "@prisma/client";
 import { postSchema } from "~/schemas/post";
 import { type User } from "@clerk/nextjs/api";
+import userData from "../../../data/users.json";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -34,7 +35,7 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
     .concat(posts.map((p) => p.originalAuthorId).filter(Boolean) as string[]);
   const users = await clerkClient.users.getUserList({
     userId: [...new Set(userIds)],
-    limit: 200
+    limit: 200,
   });
 
   for (const user of users) {
@@ -42,7 +43,7 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
   }
   return posts.map((post) => {
     const author = idToUser.get(post.authorId) as User;
-    console.log("author", author?.id, post.authorId);
+    // console.log("author", author?.id, post.authorId);
     const originalAuthor = post.originalAuthorId
       ? idToUser.get(post.originalAuthorId)
       : undefined;
@@ -55,10 +56,10 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
       },
       originalAuthor: originalAuthor
         ? {
-          id: originalAuthor.id,
-          username: originalAuthor.username,
-          profileImageUrl: originalAuthor.profileImageUrl,
-        }
+            id: originalAuthor.id,
+            username: originalAuthor.username,
+            profileImageUrl: originalAuthor.profileImageUrl,
+          }
         : undefined,
     };
   });
@@ -66,11 +67,12 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
 
 const addUserDataToPost = async (post: PostWithLikeAndBite) => {
   const author = await clerkClient.users.getUser(post.authorId);
-  const originalAuthor = post.authorId === post.originalAuthorId
-    ? author
-    : post.originalAuthorId !== null
-    ? await clerkClient.users.getUser(post.originalAuthorId)
-    : undefined;
+  const originalAuthor =
+    post.authorId === post.originalAuthorId
+      ? author
+      : post.originalAuthorId !== null
+        ? await clerkClient.users.getUser(post.originalAuthorId)
+        : undefined;
 
   return {
     post,
@@ -81,10 +83,10 @@ const addUserDataToPost = async (post: PostWithLikeAndBite) => {
     },
     originalAuthor: originalAuthor
       ? {
-        id: originalAuthor.id,
-        username: originalAuthor.username,
-        profileImageUrl: originalAuthor.profileImageUrl,
-      }
+          id: originalAuthor.id,
+          username: originalAuthor.username,
+          profileImageUrl: originalAuthor.profileImageUrl,
+        }
       : undefined,
   };
 };

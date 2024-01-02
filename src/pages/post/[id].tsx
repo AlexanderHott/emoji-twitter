@@ -3,10 +3,11 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { PageLayout } from "~/components/Layout";
-import { LoadingPage } from "~/components/Loading";
-import { PostView } from "~/components/PostView";
+// import { LoadingPage } from "~/components/Loading";
+import { PostView } from "~/components/museum/PostView";
+import { POST_MAP } from "~/data/data";
 // import { generateSSGHelper } from "~/server/utils";
-import { api } from "~/utils/api";
+// import { api } from "~/utils/api";
 
 // export const getStaticProps: GetStaticProps = async (context) => {
 //   const ssg = generateSSGHelper();
@@ -33,14 +34,17 @@ import { api } from "~/utils/api";
 const SinglePostPage: NextPage = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
-  const { data: post, isLoading } = api.post.getById.useQuery({ id });
-  if (isLoading || !post) return <LoadingPage />;
+  // const { data: post, isLoading } = api.post.getById.useQuery({ id });
+  // if (isLoading || !post) return <LoadingPage />;
   // if (!data) return <div>404</div>;
-
+  const post = POST_MAP.get(id);
+  if (!post) {
+    return <div>Post not found</div>;
+  }
   return (
     <>
       <Head>
-        <title>{`${post.post.content} - @${post.author.username || ""}`}</title>
+        <title>{`${post.content} - @${post.author.username || ""}`}</title>
       </Head>
       <PageLayout>
         <PostView {...post} />

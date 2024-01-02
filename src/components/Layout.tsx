@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { HomeIcon, SparklesIcon, UserIcon } from "@heroicons/react/24/outline";
-import { SignedIn } from "@clerk/nextjs";
-import { useUser } from "@clerk/nextjs";
+// import { SignedIn } from "@clerk/nextjs";
+// import { useUser } from "@clerk/nextjs";
 
 export const PageLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { user } = useUser();
+  // const { user } = useUser();
   return (
     <main className="flex h-screen justify-center">
-      <aside className="flex-col hidden md:flex p-4 gap-4">
+      <aside className="hidden flex-col gap-4 p-4 md:flex">
         <Link href="/" className="flex gap-2">
           <HomeIcon height={24} width={24} />
           <span className="text-xl">Home</span>
@@ -18,12 +18,12 @@ export const PageLayout: React.FC<{ children: React.ReactNode }> = ({
           <SparklesIcon height={24} width={24} />
           <span className="text-xl">Your Feed</span>
         </Link>
-        <SignedIn>
+        {/*<SignedIn>
           <Link href={`/@${user?.username || ""}`} className="flex gap-2">
             <UserIcon height={24} width={24} />
             <span className="text-xl">Profile</span>
           </Link>
-        </SignedIn>
+        </SignedIn>*/}
       </aside>
       <div className="h-max w-full border-x border-slate-400 md:max-w-2xl">
         {children}

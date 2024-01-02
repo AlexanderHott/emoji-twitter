@@ -1,18 +1,18 @@
 import { type AppType } from "next/app";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { api } from "~/utils/api";
+// import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+// import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import Head from "next/head";
 import { NavBar } from "~/components/NavBar";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  console.log("node env", process.env.NODE_ENV);
   return (
-    <ClerkProvider {...pageProps}>
+    // <ClerkProvider {...pageProps}>
+    <>
       <Head>
         <title>Emoji Twitter</title>
         <meta name="description" content="🗿🗿🗿" />
@@ -39,9 +39,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       )}
       <NavBar />
       <Component {...pageProps} />
-      <ReactQueryDevtools />
-    </ClerkProvider>
+      {/*<ReactQueryDevtools />*/}
+    </>
+    // </ClerkProvider>
   );
 };
 
-export default api.withTRPC(MyApp);
+// export default api.withTRPC(MyApp);
+export default MyApp;

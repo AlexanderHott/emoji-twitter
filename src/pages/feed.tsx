@@ -1,50 +1,63 @@
-import { RedirectToSignIn, useUser } from "@clerk/nextjs";
+"use client";
+// import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/Layout";
-import { LoadingPage } from "~/components/Loading";
-import { PostView } from "~/components/PostView";
-import { api } from "~/utils/api";
+// import { LoadingPage } from "~/components/Loading";
+// import { PostView } from "~/components/PostView";
+import { PostView } from "~/components/museum/PostView";
+// import { api } from "~/utils/api";
 import { CreatePostWizard } from ".";
+import { POSTS } from "~/data/data";
+import { useSearchParams } from "next/navigation";
 
-const FollowingFeed = ({followerId}: {followerId: string}) => {
-  const {
-    data: posts,
-    isLoading: postIsLoading,
-    error: postError,
-  } = api.post.getFollowingPosts.useQuery({followerId});
+const FollowingFeed = ({ followerId }: { followerId: string | null }) => {
+  // const {
+  //   data: posts,
+  //   isLoading: postIsLoading,
+  //   error: postError,
+  // } = api.post.getFollowingPosts.useQuery({ followerId });
 
-  if (postIsLoading) return <LoadingPage />;
+  // if (postIsLoading) return <LoadingPage />;
 
-  if (postError) {
-    return (
-      <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
-        Failed to load posts
-      </div>
-    );
+  // if (postError) {
+  //   return (
+  //     <div className="absolute right-0 top-0 flex h-screen w-screen items-center justify-center">
+  //       Failed to load posts
+  //     </div>
+  //   );
+  // }
+
+  let posts;
+  if (followerId !== undefined) {
+    // posts = POSTS.filter((p) => p.authorId);
+    posts = POSTS;
+  } else {
+    posts = POSTS;
   }
-
   return (
     <div className="flex flex-col">
-      {posts?.map((props) => <PostView key={props.post.id} {...props} />)}
+      {posts?.map((post) => <PostView key={post.id} {...post} />)}
     </div>
   );
 };
 
 const FeedPage = () => {
-  const { isLoaded: userIsLoaded, isSignedIn, user } = useUser();
+  // const { isLoaded: userIsLoaded, isSignedIn, user } = useUser();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
 
   // start loading posts immediately
-  api.post.getFollowingPosts.useQuery({ followerId: user?.id || "" });
-  if (!userIsLoaded) return null;
-  if (!user) return <RedirectToSignIn />;
+  // api.post.getFollowingPosts.useQuery({ followerId: user?.id || "" });
+  // if (!userIsLoaded) return null;
+  // if (!user) return <RedirectToSignIn />;
 
   return (
     <PageLayout>
-      {isSignedIn && (
+      {false && (
         <div className="flex border-b border-slate-400 p-4">
-          <CreatePostWizard />
+          {/*<CreatePostWizard />*/}
         </div>
       )}
-      <FollowingFeed followerId={user.id}/>
+      <FollowingFeed followerId={userId} />
     </PageLayout>
   );
 };

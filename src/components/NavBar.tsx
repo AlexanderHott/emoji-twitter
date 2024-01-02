@@ -1,16 +1,16 @@
 import Link from "next/link";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignOutButton,
-  useUser,
-} from "@clerk/nextjs";
+// import {
+//   SignedIn,
+//   SignedOut,
+//   SignInButton,
+//   SignOutButton,
+//   useUser,
+// } from "@clerk/nextjs";
 import {
   Bars3Icon,
   HomeIcon,
   SparklesIcon,
-  UserIcon,
+  // UserIcon,
 } from "@heroicons/react/24/outline";
 
 export const NavBar = () => {
@@ -20,7 +20,7 @@ export const NavBar = () => {
         🗿
       </Link>
       <div className="flex items-center gap-4">
-        <SignedIn>
+        {/*gnedIn>
           <SignOutButton>
             <Button variant={"outline"}>Sign Out</Button>
           </SignOutButton>
@@ -29,7 +29,8 @@ export const NavBar = () => {
           <SignInButton>
             <Button>Sign In</Button>
           </SignInButton>
-        </SignedOut>
+        </SignedOut>*/}
+        <Button>Sign In</Button>
         <div className="md:hidden">
           <MobileNav />
         </div>
@@ -48,9 +49,16 @@ import {
 } from "./ui/Sheet";
 import { Separator } from "./ui/Separator";
 import { GithubIcon } from "lucide-react";
+import { USER_MAP } from "~/data/data";
+import { useSearchParams } from "next/navigation";
 
 export function MobileNav() {
-  const { user } = useUser();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
+  if (!userId) return <div>404</div>;
+  const user = USER_MAP.get(userId);
+  if (!user) return <div>404</div>;
+  // const { user } = useUser();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -72,16 +80,16 @@ export function MobileNav() {
               <span className="text-xl">Your Feed</span>
             </Link>
           </SheetClose>
-          <SignedIn>
+          {/*<SignedIn>
             <SheetClose asChild>
               <Link href={`/@${user?.username || ""}`} className="flex gap-2">
                 <UserIcon height={24} width={24} />
                 <span className="text-xl">Profile</span>
               </Link>
             </SheetClose>
-          </SignedIn>
+          </SignedIn>*/}
         </div>
-        <Separator className="bg-white my-4" />
+        <Separator className="my-4 bg-white" />
         <SheetFooter>
           <Link
             href="https://github.com/AlexanderHOtt/emoji-twitter"
