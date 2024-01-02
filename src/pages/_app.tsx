@@ -1,5 +1,6 @@
 import { type AppType } from "next/app";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Link from "next/link";
 
 // import { api } from "~/utils/api";
 
@@ -37,6 +38,16 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           ⚠️ Dev Build ⚠️
         </div>
       )}
+      <div className=" bg-gradient-to-r from-blue-600 to-violet-600 py-2 text-center text-xl">
+        ⚠️ Archived{" "}
+        <Link
+          href="https://github.com/AlexanderHott/emoji-twitter/blob/main/README.md"
+          className="text-sm underline"
+        >
+          Learn More
+        </Link>{" "}
+        ⚠️
+      </div>
       <NavBar />
       <Component {...pageProps} />
       {/*<ReactQueryDevtools />*/}
