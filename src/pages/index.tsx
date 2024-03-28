@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
-import { LoadingPage } from "~/components/Loading";
+import { LoadingPage, LoadingSpinner } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
 import { Button } from "~/components/ui/Button";
 import { postSchema } from "~/schemas/post";
@@ -103,13 +103,15 @@ const Feed = () => {
     error: postError,
   } = api.post.getAll.useQuery();
 
-  if (postIsLoading) return <LoadingPage />;
-
+  if (postIsLoading)
+    return (
+      <div className="flex justify-center  pt-16">
+        <LoadingSpinner size={48} />
+      </div>
+    );
   if (postError)
     return (
-      <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
-        Failed to load posts
-      </div>
+      <div className="flex justify-center  pt-16">Failed to load posts</div>
     );
 
   return (
@@ -122,24 +124,23 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-    console.log("index loaded")
-    const { isLoaded: userIsLoaded, isSignedIn } = useUser();
+  console.log("index loaded");
+  const { isLoaded: userIsLoaded, isSignedIn } = useUser();
 
   // start loading posts immediately
   api.post.getAll.useQuery();
   if (!userIsLoaded) return null;
 
-    return (
-        <PageLayout>
-            <div className="flex border-b border-slate-400 p-4">
-
-                {isSignedIn && <CreatePostWizard />}
-                {isSignedIn && <SignOutButton />}
-                {!isSignedIn && <SignInButton />}
-            </div>
-            <Feed />
-        </PageLayout>
-    );
+  return (
+    <PageLayout>
+      {isSignedIn && (
+        <div className="flex border-b border-slate-400 p-4">
+          <CreatePostWizard />
+        </div>
+      )}
+      <Feed />
+    </PageLayout>
+  );
 };
 
 export default Home;

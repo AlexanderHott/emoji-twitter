@@ -20,7 +20,7 @@ model Post {
     likes    Int    @default(0)
 
     userLikes UserLikes[]
-    repost    Repost[]
+    reposts   Repost[]
 
     @@index([authorId])
 }

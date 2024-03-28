@@ -50,9 +50,9 @@ const ProfileFeed = ({ userId }: { userId: string }) => {
 
   return (
     <div>
-      {/* {data.map(({ post, author }) => ( */}
-      {/*     <PostView post={post} author={author} key={post.id} /> */}
-      {/* ))} */}
+      {/* {data.map(({ post, author }) => (
+        <PostView post={post} author={author} key={post.id} />
+      ))} */}
 
       {postsAndReposts.map(({ post, author }) => (
         <PostView post={post} author={author} key={post.id} />
@@ -108,6 +108,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             width={128}
             height={128}
             className="absolute bottom-0 left-0 -mb-16 ml-4 rounded-full border-4 border-black bg-black"
+            priority
           />
           <div className="absolute bottom-0 left-24 -mb-16 ml-4 rounded-full border-4 border-black bg-black">
             {emoji}

@@ -34,7 +34,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <Toaster position="bottom-center" />
       {process.env.NODE_ENV === "development" && (
         <div className=" bg-gradient-to-r from-blue-600 to-violet-600 py-2 text-center text-xl">
-          ⚠️ Dev Build ⚠️
+          ⚠️ Dev Build ⚠️: <pre>user_2NQN036YRDdASJbRCOqAX7rMZf6</pre>
         </div>
       )}
       <NavBar />
