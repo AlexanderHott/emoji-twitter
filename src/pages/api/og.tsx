@@ -62,6 +62,6 @@ export default function handle() {
       width: 1200,
       height: 630,
       //   fonts: [{ name: "Impact", data: fontData, style: "normal" }],
-    }
+    },
   );
 }

@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@clerk/nextjs": "^4.31.6",
+    "@fsouza/prettierd": "^0.25.4",
     "@tanstack/react-query-devtools": "^4.36.1",
     "@types/eslint": "^8.56.12",
     "@types/node": "^20.17.10",
