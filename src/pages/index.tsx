@@ -78,7 +78,6 @@ export const CreatePostWizard = ({
     .string()
     .min(1, "you must have at least 1 emoji")
     .emoji("Post must only contain emojis");
-  type PostSchema = z.infer<typeof postSchema>;
   const post = () => {
     try {
       postSchema.parse(content);

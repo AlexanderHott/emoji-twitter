@@ -11,7 +11,6 @@ import { Redis } from "@upstash/redis";
 import { type Post } from "@prisma/client";
 import { postSchema } from "~/schemas/post";
 import { type User } from "@clerk/nextjs/api";
-import userData from "../../../data/users.json";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -52,13 +51,13 @@ const addUserDataToPosts = async (posts: PostWithLikeAndBite[]) => {
       author: {
         id: author.id,
         username: author.username,
-        profileImageUrl: author.profileImageUrl,
+        profileImageUrl: author.imageUrl,
       },
       originalAuthor: originalAuthor
         ? {
             id: originalAuthor.id,
             username: originalAuthor.username,
-            profileImageUrl: originalAuthor.profileImageUrl,
+            profileImageUrl: originalAuthor.imageUrl,
           }
         : undefined,
     };
@@ -79,13 +78,13 @@ const addUserDataToPost = async (post: PostWithLikeAndBite) => {
     author: {
       id: author.id,
       username: author.username,
-      profileImageUrl: author.profileImageUrl,
+      profileImageUrl: author.imageUrl,
     },
     originalAuthor: originalAuthor
       ? {
           id: originalAuthor.id,
           username: originalAuthor.username,
-          profileImageUrl: originalAuthor.profileImageUrl,
+          profileImageUrl: originalAuthor.imageUrl,
         }
       : undefined,
   };

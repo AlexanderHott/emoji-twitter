@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { HomeIcon, SparklesIcon, UserIcon } from "@heroicons/react/24/outline";
-// import { SignedIn } from "@clerk/nextjs";
-// import { useUser } from "@clerk/nextjs";
+import { HomeIcon, SparklesIcon } from "@heroicons/react/24/outline";
 
 export const PageLayout: React.FC<{ children: React.ReactNode }> = ({
   children,

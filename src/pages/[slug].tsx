@@ -1,19 +1,13 @@
-// import { SignedIn, useUser } from "@clerk/nextjs";
 import { ShareIcon } from "@heroicons/react/24/outline";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
-// import { LoadingPage } from "~/components/Loading";
-// import { PostView } from "~/components/PostView";
 import { PostView } from "~/components/museum/PostView";
 import { Button } from "~/components/ui/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/Tabs";
 import { BITES, LIKES, POSTS, USER_MAP, type User } from "~/data/data";
-// import { generateSSGHelper } from "~/server/utils";
-// import { api } from "~/utils/api";
 
 // export const getStaticProps: GetStaticProps = async (context) => {
 //   const ssg = generateSSGHelper();
@@ -136,8 +130,6 @@ const ProfilePage: NextPage = () => {
   // if (!authLoaded || isFollowStatsLoaded) {
   //   return null;
   // }
-  const searchParams = useSearchParams();
-  const userId = searchParams.get("userId");
   const user = USER_MAP.get("user");
   if (!user) return <div>404</div>;
 

@@ -1,11 +1,6 @@
 "use client";
-// import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/Layout";
-// import { LoadingPage } from "~/components/Loading";
-// import { PostView } from "~/components/PostView";
 import { PostView } from "~/components/museum/PostView";
-// import { api } from "~/utils/api";
-import { CreatePostWizard } from ".";
 import { POSTS } from "~/data/data";
 import { useSearchParams } from "next/navigation";
 
